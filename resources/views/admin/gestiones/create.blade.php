@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Creaciòn de una nueva gestiòn educativa</h1>
+    <h1>Creación de una nueva gestión educativa</h1>
     <hr>
 @stop
 

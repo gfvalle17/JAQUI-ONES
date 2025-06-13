@@ -30,7 +30,7 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="{{ route('admin.grados.store') }}" method="POST">
+                                            <form action="{{ url('/admin/grados/create') }}" method="POST">
                                                 @csrf
                                                 <div class="row">
                                                     <div class="col-md-12">
@@ -41,8 +41,8 @@
                                                                     <span class="input-group-text"><i 
                                                                         class="fas fa-layer-group"></i></span>
                                                                 </div>
-                                                                <select class="form-control" name="nivel_id"
-                                                                id="nivel_id" required>
+                                                                <select class="form-control" name="nivel_id_create"
+                                                                id="nivel_id_create" required>
                                                                 <option value="">Seleccione un nivel</option>
                                                                 @foreach ($niveles as $nivel)
                                                                     <option value="{{ $nivel->id }}">
@@ -50,7 +50,7 @@
                                                                 @endforeach                                               
                                                                 </select>
                                                             </div>
-                                                            @error('nivel_id')
+                                                            @error('nivel_id_create')
                                                                 <small style="color: red">{{$message}}</small>
                                                             @enderror
                                                         </div>
@@ -65,11 +65,11 @@
                                                                     <span class="input-group-text"><i 
                                                                         class="fas fa-list-alt"></i></span>
                                                                 </div>
-                                                                <input type="text" class="form-control" name="nombre" 
-                                                                value="{{ old('nombre') }}" 
+                                                                <input type="text" class="form-control" name="nombre_create" 
+                                                                value="{{ old('nombre_create') }}" 
                                                                 placeholder="Escriba aquí..." required>
                                                             </div>
-                                                            @error('nombre')
+                                                            @error('nombre_create')
                                                                 <small style="color: red">{{$message}}</small>
                                                             @enderror
                                                         </div>
@@ -121,7 +121,7 @@
                                                         <i class="fas fa-pencil-alt"></i>Editar
                                                     </button>
 
-                                                    <form action="{{ url('admin.grados.update' . $grado->id) }}" method="post" 
+                                                    <form action="{{ url('/admin/grados/' .$grado->id) }}" method="post" 
                                                         id="miFormulario{{ $grado->id }}">
                                                         @csrf
                                                         @method('DELETE')
@@ -164,7 +164,7 @@
                                                                     </button>
                                                                 </div>
                                                                 <div class="modal-body">
-                                                                    <form action="{{ route('admin.grados.destroy', $grado->id )}}" 
+                                                                    <form action="{{ url('/admin/grados/'.$grado->id )}}" 
                                                                         method="POST">
                                                                         @csrf
                                                                         @method('PUT')
@@ -179,7 +179,7 @@
                                                                                         </div>
                                                                                         <select class="form-control" name="nivel_id"
                                                                                         id="nivel_id" required>
-                                                                                        <option value="">Seleccione una nivel</option>
+                                                                                        <option value="">Seleccione un nivel</option>
                                                                                         @foreach ($niveles as $nivel)
                                                                                             <option value="{{ $nivel->id }}"  {{ $nivel->id == $grado->nivel_id ? 'selected' : '' }} >
                                                                                                 {{ $nivel->nombre }}</option>                                                  

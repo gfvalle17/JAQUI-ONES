@@ -43,3 +43,91 @@ table turnos {
     id int [pk, increment]
     nombre varchar
 }
+
+table materias {
+    id int [pk, increment]
+    nombre varchar
+}
+
+table users {
+    id int [pk, increment]
+    name varchar
+    email varchar
+    password varchar
+}
+
+table personals {
+    id int [pk, increment]
+    usuario_id int [ref: > users.id]
+    tipo varchar
+    nombres varchar
+    apellidos varchar
+    ci varchar
+    fecha_nacimiento date
+    direccion varchar
+    telefono varchar
+    profesion varchar
+    foto varchar
+}
+
+table formaciones {
+    id int [pk, increment]
+    personal_id int [ref: > personals.id]
+    titulo varchar
+    institucion varchar
+    nivel varchar
+    fecha_graduacion date
+    archivo varchar
+}
+
+table ppffs {
+    id int [pk, increment]
+    nombres varchar
+    apellidos varchar
+    ci varchar
+    fecha_nacimiento date
+    telefono varchar
+    parentesco varchar
+    ocupacion varchar
+    direccion varchar
+}
+
+table estudiantes {
+    id int [pk, increment]
+    usuario_id int [ref: > users.id]
+    paralelo_id int [ref: > paralelos.id]
+    ppff_id int [ref: > ppffs.id]
+    nombres varchar
+    apellidos varchar
+    ci varchar
+    fecha_nacimiento date
+    direccion varchar
+    genero varchar
+    telefono varchar
+    foto varchar
+    estado varchar  
+}
+
+table matriculaciones {
+    id int [pk, increment]
+    estudiante_id int [ref: > estudiantes.id]
+    turno_id int [ref: > turnos.id]
+    gestion_id int [ref: > gestiones.id]
+    nivel_id int [ref: > niveles.id]
+    grado_id int [ref: > grados.id]
+    paralelo_id int [ref: > paralelos.id]
+}
+
+
+table asignaciones {
+    id int [pk, increment]
+    personal_id int [ref: > personals.id]
+    gestion_id int [ref: > gestiones.id]
+    nivel_id int [ref: > niveles.id]
+    grado_id int [ref: > grados.id]
+    paralelo_id int [ref: > paralelos.id]
+    materia_id int [ref: > materias.id]
+    turno_id int [ref: > turnos.id]
+    estado varchar
+    fecha_asignacion date
+}

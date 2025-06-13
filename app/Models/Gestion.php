@@ -8,13 +8,21 @@ class Gestion extends Model
 {
     protected $table = 'gestions';
 
-    protected $filiable = [
+    protected $fillable = [
         'nombre',
     ];
 
-public function periodos()
-{
-    return $this->hasMany(Periodo::class);
-}
+    public function periodos()
+    {
+        return $this->hasMany(Periodo::class);
+    }
+
+    public function matriculaciones(){
+        return $this->hasMany(Matriculacion::class);
+    }
+
+    public function asignaciones(){
+        return $this->hasMany(Matriculacion::class);
+    }
 
 }

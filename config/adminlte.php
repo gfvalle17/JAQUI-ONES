@@ -336,7 +336,7 @@ return [
         ],
 
         [
-            'text' => 'Paralelos',
+            'text' => 'Secciones',
             'url' => 'admin/paralelos',
             'icon' => 'fas fa-fw fa-clone',
             'classes' => 'bg-blue text-white',
@@ -347,6 +347,65 @@ return [
             'url' => 'admin/turnos',
             'icon' => 'fas fa-fw fa-clock',
             'classes' => 'bg-blue text-while',
+        ],
+
+        [
+            'text' => 'Materias',
+            'url' => 'admin/materias',
+            'icon' => 'fas fa-fw fa-book',
+            'classes' => 'bg-blue text-white',
+        ],
+
+        [
+            'text' => 'Roles',
+            'url' => 'admin/roles',
+            'icon' => 'fas fa-fw fa-user-check',
+            'classes' => 'bg-blue text-white',
+        ],
+
+        [
+            'text' => 'Personal',
+            'url' => 'admin/personal',
+            'icon' => 'fas fa-fw fa-users-cog',
+            'classes' => 'bg-blue text-white',
+            'submenu' => [
+                [   'text' => 'Administrativo',
+                    'url' => 'admin/personal/administrativo',
+                    'classes' => 'bg-white text-black',
+                ],
+                [   'text' => 'Docente',
+                    'url' => 'admin/personal/docente',
+                    'classes' => 'bg-white text-black',
+                ],
+            ]
+        ],
+
+        [
+            'text' => 'Asignaciones',
+            'icon' => 'fas fa-fw fa-chalkboard-teacher',
+            'classes' => 'bg-blue text-white',
+            'url' => 'admin/asignaciones',
+        ],
+
+        [
+            'text' => 'Padres de familia',
+            'icon' => 'fas fa-fw fa-house-user',
+            'classes' => 'bg-blue text-white',
+            'url' => 'admin/ppffs',
+        ],
+
+        [
+            'text' => 'Estudiantes',
+            'icon' => 'fas fa-fw fa-user-graduate',
+            'classes' => 'bg-blue text-white',
+            'url' => 'admin/estudiantes',
+        ],
+
+        [
+            'text' => 'Matriculaciones',
+            'url' => 'admin/matriculaciones',
+            'icon' => 'fas fa-fw fa-clipboard-list',
+            'classes' => 'bg-blue text-white',
         ],
 
     ],
@@ -387,7 +446,7 @@ return [
 
     'plugins' => [
         'Datatables' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
@@ -404,10 +463,55 @@ return [
                     'asset' => false,
                     'location' => '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.datatables.net/buttons/2.4.0/js/dataTables.buttons.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.datatables.net/buttons/2.4.0/js/buttons.bootstrap4.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.datatables.net/buttons/2.4.0/js/buttons.html5.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.datatables.net/buttons/2.4.0/js/buttons.print.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => '//cdn.datatables.net/buttons/2.4.0/js/buttons.colVis.min.js',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => false,
+                    'location' => '//cdn.datatables.net/buttons/2.4.0/css/buttons.bootstrap4.min.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => false,
+                    'location' => 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/vfs.fonts.js',
+                ],
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
