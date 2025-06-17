@@ -37,8 +37,10 @@
                                         <td>{{ $role->name }}</td>
                                         <td>
                                             <div class="row d-flex justify-content-center">
+                                                <a href="{{ url('/admin/roles/'.$role->id.'/permisos') }}" class="btn btn-warning btn-sm"><i class="fas fa-check-list ">
+                                                    </i> Permisos</a>
                                                 <a href="{{ url('/admin/roles/'.$role->id.'/edit') }}" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Editar</a>
-                                            
+
                                                 <form action="{{ url('/admin/roles/'.$role->id )}}" method="post" id="miFormulario{{ $role->id }}">
                                                     @csrf
                                                     @method('DELETE')

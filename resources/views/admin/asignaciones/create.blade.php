@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Asignaciones/Registro de una nueva asignación del docente</h1>
+    <h1>Registro de una nueva asignación del docente</h1>
     <hr>
 @stop
 
@@ -151,7 +151,7 @@
                     
                         <form action="{{ url('admin/asignaciones/create') }}" method="POST">
                         @csrf
-                            <input type="text" name="personal_id" id="docente_id" hidden required>
+                            <input type="text" name="docente_id" id="docente_id" hidden required>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">

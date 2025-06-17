@@ -185,7 +185,6 @@
                                                     <option value="{{ $gestion->id }}">{{ $gestion->nombre }}</option>
                                                 @endforeach
                                             </select>
-                                            </select>
                                         </div>
                                         @error('gestion_id')
                                             <small style="color: red">{{ $message }}</small>
@@ -207,7 +206,6 @@
                                                     <option value="{{ $nivele->id }}">{{ $nivele->nombre }}</option>
                                                 @endforeach
                                             </select>
-                                            </select>
                                         </div>
                                         @error('nivel_id')
                                             <small style="color: red">{{ $message }}</small>
@@ -226,7 +224,6 @@
                                             <select name="grado_id" id="grados" class="form-control">
                                                 <option value="">Primero seleccione un nivel...</option>
                                             </select>
-                                            </select>
                                         </div>
                                         @error('grado_id')
                                             <small style="color: red">{{ $message }}</small>
@@ -243,15 +240,38 @@
                                             <select name="paralelo_id" id="paralelos" class="form-control">
                                                 <option value="">Primero seleccione una grado...</option>
                                             </select>
-                                            </select>
                                         </div>
                                         @error('paralelo_id')
                                             <small style="color: red">{{ $message }}</small>
                                         @enderror
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">Fecha</label><b> (*)</b>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                            </div>
+                                            <input type="date" class="form-control" name="fecha_matriculacion" required>
+                                        </div>
+                                        @error('fecha_matriculacion')
+                                            <small style="color: red">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
-                            
+                            <hr>
+                            <div class="row">
+                                <div class="cold-md-12">
+                                    <div class="form-group">
+                                        <a href="{{ url('/admin/matriculaciones') }}" class="btn btn-default"><i
+                                            class="fas fa-arrow-left"></i> Cancelar</a>
+                                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>
+                                            Guardar</button>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                         
                 </div>

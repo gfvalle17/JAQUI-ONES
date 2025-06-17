@@ -62,6 +62,247 @@ class DatabaseSeeder extends Seeder
         Materia::create(['nombre' => 'VALORES, ESPIRITUALIDADES Y RELIGIONES']);
         Materia::create(['nombre' => 'TÉCNICA, TECNOLÓGICA GENERAL']);
 
+        //DOCENTES
+        $usuario = User::create([
+        'name' => 'Angel Siccha',
+        'email' => 'angel.siccha@jaq.com',
+        'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('DOCENTE');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'docente',
+            'nombres' => 'Angel',
+            'apellidos' => 'Siccha',
+            'ci' => '78767890',
+            'fecha_nacimiento' => '2004-11-12',
+            'direccion' => 'Mala',
+            'telefono' => '987898765',
+            'profesion' => 'Ing. de Sistemas',
+            'foto' => 'uploads/fotos/' . time() . '_ana.jpg',
+        ]);
+
+        $usuario = User::create([
+        'name' => 'Lucía Vargas',
+        'email' => 'lucia.vargas@jaq.com',
+        'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('DOCENTE');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'docente',
+            'nombres' => 'Lucía',
+            'apellidos' => 'Vargas',
+            'ci' => '71234567',
+            'fecha_nacimiento' => '1990-03-25',
+            'direccion' => 'Calango',
+            'telefono' => '987654321',
+            'profesion' => 'Lic. en Educación Primaria',
+            'foto' => 'uploads/fotos/' . time() . '_lucia.jpg',
+        ]);
+
+        $usuario = User::create([
+            'name' => 'Carlos Núñez',
+            'email' => 'carlos.nunez@jaq.com',
+            'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('DOCENTE');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'docente',
+            'nombres' => 'Carlos',
+            'apellidos' => 'Núñez',
+            'ci' => '72345678',
+            'fecha_nacimiento' => '1985-06-15',
+            'direccion' => 'Asia',
+            'telefono' => '912345678',
+            'profesion' => 'Profesor de Matemática',
+            'foto' => 'uploads/fotos/' . time() . '_carlos.jpg',
+        ]);
+
+        $usuario = User::create([
+            'name' => 'María Torres',
+            'email' => 'maria.torres@jaq.com',
+            'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('DOCENTE');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'docente',
+            'nombres' => 'María',
+            'apellidos' => 'Torres',
+            'ci' => '73456789',
+            'fecha_nacimiento' => '1987-01-10',
+            'direccion' => 'San Antonio',
+            'telefono' => '923456789',
+            'profesion' => 'Lic. en Ciencias Sociales',
+            'foto' => 'uploads/fotos/' . time() . '_maria.jpg',
+        ]);
+
+        $usuario = User::create([
+            'name' => 'Pedro García',
+            'email' => 'pedro.garcia@jaq.com',
+            'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('DOCENTE');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'docente',
+            'nombres' => 'Pedro',
+            'apellidos' => 'García',
+            'ci' => '74567890',
+            'fecha_nacimiento' => '1992-07-20',
+            'direccion' => 'Mala',
+            'telefono' => '934567890',
+            'profesion' => 'Profesor de Química',
+            'foto' => 'uploads/fotos/' . time() . '_pedro.jpg',
+        ]);
+
+        $usuario = User::create([
+            'name' => 'Sofía Mendoza',
+            'email' => 'sofia.mendoza@jaq.com',
+            'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('DOCENTE');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'docente',
+            'nombres' => 'Sofía',
+            'apellidos' => 'Mendoza',
+            'ci' => '75678901',
+            'fecha_nacimiento' => '1995-02-05',
+            'direccion' => 'Santa Cruz de Flores',
+            'telefono' => '945678901',
+            'profesion' => 'Lic. en Lenguas',
+            'foto' => 'uploads/fotos/' . time() . '_sofia.jpg',
+        ]);
+
+        $usuario = User::create([
+            'name' => 'Luis Fernández',
+            'email' => 'luis.fernandez@jaq.com',
+            'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('DOCENTE');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'docente',
+            'nombres' => 'Luis',
+            'apellidos' => 'Fernández',
+            'ci' => '76789012',
+            'fecha_nacimiento' => '1980-09-30',
+            'direccion' => 'Coayllo',
+            'telefono' => '956789012',
+            'profesion' => 'Profesor de Historia',
+            'foto' => 'uploads/fotos/' . time() . '_luis.jpg',
+        ]);
+
+        $usuario = User::create([
+            'name' => 'Daniela Ruiz',
+            'email' => 'daniela.ruiz@jaq.com',
+            'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('DOCENTE');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'docente',
+            'nombres' => 'Daniela',
+            'apellidos' => 'Ruiz',
+            'ci' => '77890123',
+            'fecha_nacimiento' => '1993-12-01',
+            'direccion' => 'San Vicente',
+            'telefono' => '967890123',
+            'profesion' => 'Lic. en Educación Inicial',
+            'foto' => 'uploads/fotos/' . time() . '_daniela.jpg',
+        ]);
+
+        $usuario = User::create([
+            'name' => 'Miguel Ríos',
+            'email' => 'miguel.rios@jaq.com',
+            'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('DOCENTE');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'docente',
+            'nombres' => 'Miguel',
+            'apellidos' => 'Ríos',
+            'ci' => '78901234',
+            'fecha_nacimiento' => '1988-08-22',
+            'direccion' => 'Mala',
+            'telefono' => '978901234',
+            'profesion' => 'Profesor de Ciencias',
+            'foto' => 'uploads/fotos/' . time() . '_miguel.jpg',
+        ]);
+
+        $usuario = User::create([
+            'name' => 'Alejandra Castro',
+            'email' => 'alejandra.castro@jaq.com',
+            'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('DOCENTE');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'docente',
+            'nombres' => 'Alejandra',
+            'apellidos' => 'Castro',
+            'ci' => '79012345',
+            'fecha_nacimiento' => '1991-04-18',
+            'direccion' => 'Santa Cruz de Flores',
+            'telefono' => '989012345',
+            'profesion' => 'Profesora de Computación',
+            'foto' => 'uploads/fotos/' . time() . '_alejandra.jpg',
+        ]);
+
+        //ADMINISTRATIVOS
+        $usuario = User::create([
+            'name' => 'Piero Zavala',
+            'email' => 'piero.zavala@jaq.com',
+            'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('ADMINISTRADOR');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'administrativo',
+            'nombres' => 'Piero',
+            'apellidos' => 'Zavala',
+            'ci' => '70123456',
+            'fecha_nacimiento' => '1984-05-14',
+            'direccion' => 'Mala',
+            'telefono' => '976543210',
+            'profesion' => 'Asistente Administrativa',
+            'foto' => 'uploads/fotos/' . time() . '_piero.jpg',
+        ]);
+
+        $usuario = User::create([
+            'name' => 'Alexander García',
+            'email' => 'alexander.garcia@jaq.com',
+            'password' => Hash::make('12345678')
+        ]);
+        $usuario->assignRole('ADMINISTRADOR');
+
+        Personal::create([
+            'usuario_id' => $usuario->id,
+            'tipo' => 'administrativo',
+            'nombres' => 'Alexander',
+            'apellidos' => 'García',
+            'ci' => '78432123',
+            'fecha_nacimiento' => '1990-08-20',
+            'direccion' => 'Mala',
+            'telefono' => '976543210',
+            'profesion' => 'Ing de Sistemas',
+            'foto' => 'uploads/fotos/' . time() . '_alexander.jpg',
+        ]);
 
     }
 }

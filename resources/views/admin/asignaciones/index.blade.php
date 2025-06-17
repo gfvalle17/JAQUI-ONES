@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1><b>Listado de asignaciones de materias a los docentes</b></h1>
+    <h1><b>Listado de asignación de materias a los docentes</b></h1>
     <hr>
 @stop
 
@@ -11,7 +11,7 @@
         <div class="col-md-12">
             <div class="card card-outline card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Asignaciones registrados</h3>
+                        <h3 class="card-title">Asignaciones registradas</h3>
 
                         <div class="card-tools">
                             <a href="{{ url('/admin/asignaciones/create/')}}" class="btn btn-primary"> Crear nuevo</a>
