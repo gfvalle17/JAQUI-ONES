@@ -15,7 +15,6 @@
 
                         <div class="card-tools">
                             <a href="{{ url('/admin/estudiantes/create/')}}" class="btn btn-primary"> Crear nuevo estudiante</a>
-
                         </div>
                         <!-- /card-tools -->
                     </div>

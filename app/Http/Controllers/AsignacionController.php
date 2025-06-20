@@ -19,7 +19,7 @@ class AsignacionController extends Controller
      */
     public function index()
     {
-        $asignaciones = Asignacion::all();
+        $asignaciones = Asignacion::with('personal','turno','gestion','nivel','grado','paralelo','materia')->get();
         return view('admin.asignaciones.index', compact('asignaciones'));
     }
 
@@ -40,12 +40,11 @@ class AsignacionController extends Controller
     {
         $docente = Personal::with('usuario','formaciones')->find($id);
 
-        if(!$docente){
+       if(!$docente){
             return response()->json(['error','Docente no encontrado']);
         }
 
         $docente->foto_url = url($docente->foto);
-
         return response()->json($docente);
         
     }

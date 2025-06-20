@@ -31,7 +31,8 @@ return [
     */
 
     'use_ico_only' => false,
-    'use_full_favicon' => false,
+    'use_full_favicon' => true,
+    'path' => 'favicon-32x32.png',
 
     /*
     |--------------------------------------------------------------------------
@@ -309,7 +310,7 @@ return [
         ],
 
         [
-            'can' => 'admin.gestiones.index',
+            'can' => 'admin.gestion.index',
             'text' => 'Gestiones',
             'url' => 'admin/gestiones',
             'icon' => 'fas fa-fw fa-tasks',
@@ -416,11 +417,19 @@ return [
 
         [
             'can' => 'admin.matriculaciones.index',
-            'text' => 'Matriculaciones',
+            'text' => 'Matrículas',
             'url' => 'admin/matriculaciones',
             'icon' => 'fas fa-fw fa-clipboard-list',
             'classes' => 'bg-blue text-white',
         ],
+
+        [
+            'can' => 'admin.asistencias.index',
+            'text' => 'Asistencias',
+            'url' => 'admin/asistencias',
+            'icon' => 'fas fa-fw fa-user-check',
+            'classes' => 'bg-blue text-white',
+                    ],
 
     ],
 

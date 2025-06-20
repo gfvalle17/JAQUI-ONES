@@ -37,4 +37,8 @@ class Asignacion extends Model
     public function matriculaciones(){
         return $this->hasMany(Matriculacion::class);
     }
+
+    public function asistencias(){
+        return $this->hasMany(Asistencia::class);
+    }
 }

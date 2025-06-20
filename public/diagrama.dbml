@@ -131,3 +131,17 @@ table asignaciones {
     estado varchar
     fecha_asignacion date
 }
+
+table asistencias {
+    id int [pk, increment]
+    asignacion_id int [ref: > asignaciones.id]
+    fecha date
+    observacion varchar
+}
+
+table detalles_asistencias {
+    id int [pk, increment]
+    asistencia_id int [ref: > asistencias.id]
+    estudiante_id int [ref: > estudiantes.id]
+    estado_estudiantes varchar
+}

@@ -77,7 +77,7 @@ class GradoController extends Controller
             if ($validate->fails()) {
                 return redirect()
                     ->back()
-                    ->withErrors()
+                    ->withErrors($validate)
                     ->withInput()
                     ->with('modal_id',$id);
             }

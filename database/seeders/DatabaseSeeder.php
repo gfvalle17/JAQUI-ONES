@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Asignacion;
 use App\Models\Configuracion;
 use App\Models\Gestion;
 use App\Models\Grado;
 use App\Models\Materia;
 use App\Models\Nivel;
+use App\Models\Paralelo;
 use App\Models\Periodo;
 use App\Models\Personal;
 use App\Models\Ppff;
@@ -49,9 +51,53 @@ class DatabaseSeeder extends Seeder
         Periodo::create(['nombre' => '2ER TRIMESTRE','gestion_id' => 1]);
         Periodo::create(['nombre' => '3ER TRIMESTRE','gestion_id' => 1]);
 
-        Nivel::create(['nombre' => 'INICIAL']);
-        Nivel::create(['nombre' => 'PRIMARIA']);
-        Nivel::create(['nombre' => 'SECUNDARIA']);
+        $inicial = Nivel::create(['nombre' => 'INICIAL']);
+        $primaria = Nivel::create(['nombre' => 'PRIMARIA']);
+        $secundaria = Nivel::create(['nombre' => 'SECUNDARIA']);
+
+        $grado1 = Grado::create(['nombre' => '3 AÑOS', 'nivel_id' => $inicial->id]);
+        $grado2 = Grado::create(['nombre' => '4 AÑOS', 'nivel_id' => $inicial->id]);
+        $grado3 = Grado::create(['nombre' => '5 AÑOS', 'nivel_id' => $inicial->id]);
+        $grado4 = Grado::create(['nombre' => '1ERO PRIMARIA', 'nivel_id' => $primaria->id]);
+        $grado5 = Grado::create(['nombre' => '2DO PRIMARIA', 'nivel_id' => $primaria->id]);
+        $grado6 = Grado::create(['nombre' => '3ERO PRIMARIA', 'nivel_id' => $primaria->id]);
+        $grado7 = Grado::create(['nombre' => '4TO PRIMARIA', 'nivel_id' => $primaria->id]);
+        $grado8 = Grado::create(['nombre' => '5TO PRIMARIA', 'nivel_id' => $primaria->id]);
+        $grado9 = Grado::create(['nombre' => '6TO PRIMARIA', 'nivel_id' => $primaria->id]);
+        $grado10 = Grado::create(['nombre' => '1ERO SECUNDARIA', 'nivel_id' => $secundaria->id]);
+        $grado11 = Grado::create(['nombre' => '2DO SECUNDARIA', 'nivel_id' => $secundaria->id]);
+        $grado12 = Grado::create(['nombre' => '3ERO SECUNDARIA', 'nivel_id' => $secundaria->id]);
+        $grado13 = Grado::create(['nombre' => '4TO SECUNDARIA', 'nivel_id' => $secundaria->id]);
+        $grado14 = Grado::create(['nombre' => '5TO SECUNDARIA', 'nivel_id' => $secundaria->id]);
+
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado1->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado1->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado2->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado2->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado3->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado3->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado4->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado4->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado5->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado5->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado6->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado6->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado7->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado7->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado8->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado8->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado9->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado9->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado10->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado10->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado11->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado11->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado12->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado12->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado13->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado13->id]);
+        Paralelo::create(['nombre' => 'A', 'grado_id' => $grado14->id]);
+        Paralelo::create(['nombre' => 'B', 'grado_id' => $grado14->id]);
 
         Turno::create(['nombre' => 'MAÑANA']);
 
@@ -61,6 +107,7 @@ class DatabaseSeeder extends Seeder
         Materia::create(['nombre' => 'QUÍMICA']);
         Materia::create(['nombre' => 'VALORES, ESPIRITUALIDADES Y RELIGIONES']);
         Materia::create(['nombre' => 'TÉCNICA, TECNOLÓGICA GENERAL']);
+
 
         //DOCENTES
         $usuario = User::create([
@@ -303,6 +350,10 @@ class DatabaseSeeder extends Seeder
             'profesion' => 'Ing de Sistemas',
             'foto' => 'uploads/fotos/' . time() . '_alexander.jpg',
         ]);
+
+        Asignacion::create(['personal_id' => 1,'gestion_id' => 1,'nivel_id' => 3,'grado_id' => 12,'paralelo_id' => 23,'materia_id' => 3,'turno_id' => 1,'fecha_asignacion' => '2025-06-17']);
+        Asignacion::create(['personal_id' => 1,'gestion_id' => 1,'nivel_id' => 3,'grado_id' => 13,'paralelo_id' => 26,'materia_id' => 4,'turno_id' => 1,'fecha_asignacion' => '2018-06-17']);
+
 
     }
 }

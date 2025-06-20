@@ -33,7 +33,7 @@
                                     <th>Nivel</th>
                                     <th>Grado</th>
                                     <th>Sección</th>
-                                    <th>Fecha de matriculación</th>
+                                    <th>Fecha de matrícula</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -41,9 +41,17 @@
                                 @foreach ($matriculaciones as $matriculacione)
                                     <tr>
                                         <td style="text-align: center">{{ $loop->iteration }}</td>
-                                        
+                                        <td>{{ $matriculacione->estudiante->apellidos." ".$matriculacione->estudiante->nombres }}</td>
+                                        <td>{{ $matriculacione->estudiante->ci }}</td>
+                                        <td>{{ $matriculacione->turno->nombre }}</td>
+                                        <td style="text-align: center">{{ $matriculacione->gestion->nombre }}</td>
+                                        <td>{{ $matriculacione->nivel->nombre }}</td>
+                                        <td>{{ $matriculacione->grado->nombre }}</td>
+                                        <td style="text-align: center">{{ $matriculacione->paralelo->nombre }}</td>
+                                        <td>{{ $matriculacione->fecha_matriculacion }}</td>
                                         <td>
                                             <div class="row d-flex justify-content-center">
+                                                <a href="{{ url('/admin/matriculaciones/pdf/'.$matriculacione->id) }}" class="btn btn-warning btn-sm"><i class="fas fa-print"></i> Matrícula</a>
                                                 <a href="{{ url('/admin/matriculaciones/'.$matriculacione->id) }}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver</a>
                                                 <a href="{{ url('/admin/matriculaciones/'.$matriculacione->id.'/edit') }}" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Editar</a>
                                             

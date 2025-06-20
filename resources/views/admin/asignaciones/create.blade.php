@@ -151,7 +151,7 @@
                     
                         <form action="{{ url('admin/asignaciones/create') }}" method="POST">
                         @csrf
-                            <input type="text" name="docente_id" id="docente_id" hidden required>
+                            <input type="text" name="personal_id" id="docente_id" required>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -323,12 +323,12 @@
             var id = $(this).val();
             if (id) {
                 $.ajax({
-                    url: "{{url('/admin/matriculaciones/buscar_grado')}}/" + id,
+                    url: "{{ url('/admin/matriculaciones/buscar_grado') }}" + '/' + id,
                     type: 'GET',
-                    success: function (grados) {
+                    success: function (grados){
                         var options = '<option value="">Seleccione un grado...</option>';
                         $.each(grados, function (key, value) {
-                            options += '<option value="' + key + '">' + value + '</option>';
+                            options += '<option value="'+key+'">'+value+'</option>';
                         });
                         $('#grados').html(options);
                     },
@@ -346,12 +346,12 @@
             var id = $(this).val();
             if (id) {
                 $.ajax({
-                    url: "{{url('/admin/matriculaciones/buscar_paralelo')}}/" + id,
+                    url: "{{ url('/admin/matriculaciones/buscar_paralelo') }}" + '/' + id,
                     type: 'GET',
                     success: function (paralelos) {
                         var options = '<option value="">Seleccione una sección...</option>';
                         $.each(paralelos, function (key, value) {
-                            options += '<option value="' + key + '">' + value + '</option>';
+                            options += '<option value="'+key+'">'+value+'</option>';
                         });
                         $('#paralelos').html(options);
                     },

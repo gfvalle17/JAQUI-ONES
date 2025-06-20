@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Configuracion;
 use App\Models\Estudiante;
 use App\Models\Gestion;
 use App\Models\Grado;
@@ -10,6 +11,7 @@ use App\Models\Matriculacion;
 use App\Models\Nivel;
 use App\Models\Paralelo;
 use App\Models\Turno;
+use Barryvdh\DomPDF\Facade\PDF;
 use Illuminate\Http\Request;
 
 class MatriculacionController extends Controller
@@ -19,7 +21,7 @@ class MatriculacionController extends Controller
      */
     public function index()
     {
-        $matriculaciones = Matriculacion::all();
+        $matriculaciones = Matriculacion::with('estudiante','turno','gestion','nivel','grado','paralelo')->get();
         return view('admin.matriculaciones.index', compact('matriculaciones'));
     }
 
@@ -81,38 +83,146 @@ class MatriculacionController extends Controller
 
     public function store(Request $request)
     {
-        //
+        //$datos = request()->all();
+        //return response()->json($datos);
+        $request->validate([
+            'estudiante_id' => 'required',
+            'turno_id' => 'required',
+            'gestion_id' => 'required',
+            'nivel_id' => 'required',
+            'grado_id' => 'required',
+            'paralelo_id' => 'required',
+            'fecha_matriculacion' => 'required',
+        ]);
+
+        //validacion para estudiantes matriculados
+        $estudiante_duplicado = Matriculacion::where('estudiante_id',$request->estudiante_id)
+        ->where('turno_id',$request->turno_id)
+        ->where('gestion_id',$request->gestion_id)
+        ->where('nivel_id',$request->nivel_id)
+        ->where('grado_id',$request->grado_id)
+        ->where('paralelo_id',$request->paralelo_id)
+        ->exists();
+
+        if($estudiante_duplicado){
+            return redirect()->back()->with([
+                'mensaje' => 'El estudiante ya esta matriculado',
+                'icono' => 'error',
+            ]);
+        }
+
+        $matriculacion = new Matriculacion();
+        $matriculacion->estudiante_id = $request->estudiante_id;
+        $matriculacion->turno_id = $request->turno_id;
+        $matriculacion->gestion_id = $request->gestion_id;
+        $matriculacion->nivel_id = $request->nivel_id;
+        $matriculacion->grado_id = $request->grado_id;
+        $matriculacion->paralelo_id = $request->paralelo_id;
+        $matriculacion->fecha_matriculacion = $request->fecha_matriculacion;
+        $matriculacion->save();
+
+        return redirect()->route('admin.matriculaciones.index')
+        ->with('mensaje', 'La matrícula se ha creado correctamente')
+        ->with('icono', 'success');
+    }
+
+    public function pdf_matricula($id){
+
+        $configuracion = Configuracion::first();
+        $matricula = Matriculacion::with('estudiante.ppff','turno','gestion','nivel','grado','paralelo')->find($id);
+
+        $pdf = PDF::loadView('admin.matriculaciones.pdf',compact('configuracion','matricula'));
+        $pdf->setPaper('letter','protrait');
+        $pdf->setOptions(['defaultFont' => 'sans-serif']);
+        $pdf->setOptions(['isRemoteEnabled' => true]);
+        return $pdf->stream('matriculas.pdf');
+
+        return $pdf->stream('matriculas.pdf');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Matriculacion $matriculacion)
+    public function show($id)
     {
-        //
+        $matricula = Matriculacion::with('estudiante.ppff','estudiante.matriculaciones','turno','gestion','nivel','grado','paralelo')->find($id);
+        return view('admin.matriculaciones.show',compact('matricula'));
+
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Matriculacion $matriculacion)
+    public function edit($id)
     {
-        //
+        $matricula = Matriculacion::with('estudiante.ppff','estudiante.matriculaciones','turno','gestion','nivel','grado','paralelo')->find($id);
+        $turnos = Turno::all();
+        $gestiones = Gestion::all();
+        $niveles = Nivel::all();
+        $grados = Grado::where('nivel_id',$matricula->nivel_id)->get();
+        $paralelos = Paralelo::where('grado_id',$matricula->grado_id)->get();
+        $estudiantes = Estudiante::all();
+        return view('admin.matriculaciones.edit',compact('matricula','turnos','gestiones','niveles','grados','paralelos','estudiantes'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Matriculacion $matriculacion)
+    public function update(Request $request, $id)
     {
-        //
+        $matriculacion = Matriculacion::find($id);
+
+        $request->validate([
+            'estudiante_id' => 'required',
+            'turno_id' => 'required',
+            'gestion_id' => 'required',
+            'nivel_id' => 'required',
+            'grado_id' => 'required',
+            'paralelo_id' => 'required',
+            'fecha_matriculacion' => 'required',
+        ]);
+
+        //validacion para estudiantes matriculados
+        $estudiante_duplicado = Matriculacion::where('estudiante_id',$request->estudiante_id)
+        ->where('turno_id',$request->turno_id)
+        ->where('gestion_id',$request->gestion_id)
+        ->where('nivel_id',$request->nivel_id)
+        ->where('grado_id',$request->grado_id)
+        ->where('paralelo_id',$request->paralelo_id)
+        ->exists();
+
+        if($estudiante_duplicado){
+            return redirect()->back()->with([
+                'mensaje' => 'El estudiante ya esta matriculado',
+                'icono' => 'error',
+            ]);
+        }
+
+        $matriculacion->estudiante_id = $request->estudiante_id;
+        $matriculacion->turno_id = $request->turno_id;
+        $matriculacion->gestion_id = $request->gestion_id;
+        $matriculacion->nivel_id = $request->nivel_id;
+        $matriculacion->grado_id = $request->grado_id;
+        $matriculacion->paralelo_id = $request->paralelo_id;
+        $matriculacion->fecha_matriculacion = $request->fecha_matriculacion;
+        $matriculacion->save();
+
+        return redirect()->route('admin.matriculaciones.index')
+        ->with('mensaje', 'La matrícula se ha actualizado correctamente')
+        ->with('icono', 'success');
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Matriculacion $matriculacion)
+    public function destroy($id)
     {
-        //
+        $matricula = Matriculacion::find($id);
+        $matricula->delete();
+
+        return redirect()->route('admin.matriculaciones.index')
+        ->with('mensaje', 'La matrícula se ha eliminado correctamente')
+        ->with('icono', 'success');
     }
 }

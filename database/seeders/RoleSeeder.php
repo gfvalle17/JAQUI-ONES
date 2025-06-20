@@ -15,14 +15,11 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $admin = Role::create(['name' => 'ADMINISTRADOR']);
-        $director_general = Role::create(['name' => 'DIRECTOR/A GENERAL']);
-        $director_academico = Role::create(['name' => 'DIRECTOR/A ACADÉMICO']);
-        $director_administrativo = Role::create(['name' => 'DIRECTOR/A ADMINISTRATIVO']);
+        $director_general = Role::create(['name' => 'DIRECTOR']);
         $docente = Role::create(['name' => 'DOCENTE']);
         $estudiante = Role::create(['name' => 'ESTUDIANTE']);
         $caja = Role::create(['name' => 'CAJERO/A']);
         $secretaria = Role::create(['name' => 'SECRETARIO/A']);
-        $regente = Role::create(['name' => 'REGENTE']);
 
         //permisos para la configuracion del sistema
         Permission::create(['name' => 'admin.configuracion.index'])->syncRoles($admin);
@@ -137,6 +134,11 @@ class RoleSeeder extends Seeder
         Permission::create(['name' => 'admin.asignaciones.edit'])->syncRoles($admin);
         Permission::create(['name' => 'admin.asignaciones.update'])->syncRoles($admin);
         Permission::create(['name' => 'admin.asignaciones.destroy'])->syncRoles($admin);
+
+        //permisos para asistencia del estudiante:
+        Permission::create(['name' => 'admin.asistencias.index'])->syncRoles($admin, $docente, $estudiante);
+        Permission::create(['name' => 'admin.asistencias.create'])->syncRoles($docente);
+        Permission::create(['name' => 'admin.asistencias.store'])->syncRoles($docente);
 
     }
 }

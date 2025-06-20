@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('content_header')
-    <h1>Matriculaciones/Registro de una nueva matrícula del estudiante</h1>
+    <h1>Registro de una nueva matrícula del estudiante</h1>
     <hr>
 @stop
 
@@ -151,7 +151,7 @@
                     
                         <form action="{{ url('admin/matriculaciones/create') }}" method="POST">
                         @csrf
-                            <input type="text" name="estudiante_id" id="estudiante_id" hidden>
+                            <input type="text" name="estudiante_id" id="estudiante_id" hidden required>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -160,7 +160,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-clock"></i></span>
                                             </div>
-                                            <select name="turno_id" id="" class="form-control">
+                                            <select name="turno_id" id="" class="form-control" required>
                                                 <option value="">Seleccione un turno...</option>
                                                 @foreach ($turnos as $turno)
                                                     <option value="{{ $turno->id }}">{{ $turno->nombre }}</option>
@@ -179,7 +179,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-university"></i></span>
                                             </div>
-                                            <select name="gestion_id" id="" class="form-control">
+                                            <select name="gestion_id" id="" class="form-control" required>
                                                 <option value="">Seleccione una gestión...</option>
                                                 @foreach ($gestiones as $gestion)
                                                     <option value="{{ $gestion->id }}">{{ $gestion->nombre }}</option>
@@ -200,7 +200,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-layer-group"></i></span>
                                             </div>
-                                            <select name="nivel_id" id="niveles" class="form-control">
+                                            <select name="nivel_id" id="niveles" class="form-control" required>
                                                 <option value="">Seleccione un nivel...</option>
                                                 @foreach ($niveles as $nivele)
                                                     <option value="{{ $nivele->id }}">{{ $nivele->nombre }}</option>
@@ -221,7 +221,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-list-alt"></i></span>
                                             </div>
-                                            <select name="grado_id" id="grados" class="form-control">
+                                            <select name="grado_id" id="grados" class="form-control" required>
                                                 <option value="">Primero seleccione un nivel...</option>
                                             </select>
                                         </div>
@@ -237,7 +237,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-clone"></i></span>
                                             </div>
-                                            <select name="paralelo_id" id="paralelos" class="form-control">
+                                            <select name="paralelo_id" id="paralelos" class="form-control" required>
                                                 <option value="">Primero seleccione una grado...</option>
                                             </select>
                                         </div>
