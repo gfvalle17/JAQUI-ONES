@@ -55,7 +55,7 @@
                 <img src="{{ url('/img/seccion.gif') }}" width="70px" alt="">
                 <div>
                     <span class="info-box-text"><b> Secciones registradas</b></span>
-                    <span class="info-box-number">{{ $total_grados }} secciones</span>
+                    <span class="info-box-number">{{ $total_paralelos }} secciones</span>
                 </div>
             </div>
         </div>

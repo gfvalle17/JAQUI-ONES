@@ -56,10 +56,12 @@
                                                 }
                                                 if ($estado == 'PRESENTE') {
                                                     $estado = '<span class="badge badge-success">P</span>';
-                                                }elseif ($estado == 'FALTA') {
+                                                } elseif ($estado == 'FALTA') {
                                                     $estado = '<span class="badge badge-danger">F</span>';
-                                                }else {
+                                                } elseif ($estado == 'TARDANZA') {
                                                     $estado = '<span class="badge badge-warning">T</span>';
+                                                } elseif ($estado == 'FJ') {
+                                                    $estado = '<span class="badge badge-info">FJ</span>';
                                                 }
                                             @endphp
                                             <td style="text-align: center">{!! $estado !!}</td>

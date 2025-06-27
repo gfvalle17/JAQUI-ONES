@@ -310,26 +310,6 @@ class DatabaseSeeder extends Seeder
             'foto' => 'uploads/fotos/' . time() . '_alejandra.jpg',
         ]);
 
-        //ADMINISTRATIVOS
-        $usuario = User::create([
-            'name' => 'Piero Zavala',
-            'email' => 'piero.zavala@jaq.com',
-            'password' => Hash::make('12345678')
-        ]);
-        $usuario->assignRole('ADMINISTRADOR');
-
-        Personal::create([
-            'usuario_id' => $usuario->id,
-            'tipo' => 'administrativo',
-            'nombres' => 'Piero',
-            'apellidos' => 'Zavala',
-            'ci' => '70123456',
-            'fecha_nacimiento' => '1984-05-14',
-            'direccion' => 'Mala',
-            'telefono' => '976543210',
-            'profesion' => 'Asistente Administrativa',
-            'foto' => 'uploads/fotos/' . time() . '_piero.jpg',
-        ]);
 
         $usuario = User::create([
             'name' => 'Alexander García',

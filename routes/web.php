@@ -140,3 +140,10 @@ Route::get('/admin/asistencias/asignacion/{id}', [App\Http\Controllers\Asistenci
 Route::post('/admin/asistencias/create', [App\Http\Controllers\AsistenciaController::class, 'store'])->name('admin.asistencias.store')->middleware('auth','can:admin.asistencias.store');
 Route::put('/admin/asistencias/{id}', [App\Http\Controllers\AsistenciaController::class, 'update'])->name('admin.asistencias.update')->middleware('auth');
 Route::delete('/admin/asistencias/{id}', [App\Http\Controllers\AsistenciaController::class, 'destroy'])->name('admin.asistencias.destroy')->middleware('auth');
+
+//rutas para asistencias del docente
+Route::post('/docente/asistencias-docente', [App\Http\Controllers\AsistenciaDocenteController::class, 'store'])->name('docente.asistencia.store')->middleware(['auth']);
+Route::get('/admin/asistencias-docente/{id}', [App\Http\Controllers\AsistenciaDocenteController::class, 'show'])->name('admin.asistencias-docente.show')->middleware(['auth', 'can:admin.asistencias.index']);
+Route::get('/admin/asistencias-docentes/{id}/edit', [App\Http\Controllers\AsistenciaDocenteController::class, 'edit'])->name('admin.asistencias-docentes.edit');
+Route::delete('/admin/asistencias-docentes/{id}', [App\Http\Controllers\AsistenciaDocenteController::class, 'destroy'])->name('admin.asistencias-docentes.destroy');
+Route::put('/admin/asistencias-docentes/{id}', [App\Http\Controllers\AsistenciaDocenteController::class, 'update'])->name('admin.asistencias-docentes.update');

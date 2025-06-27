@@ -44,6 +44,9 @@
                                         <td>{{ $asignacione->materia->nombre }}</td>
                                         <td>
                                             <center>
+                                                 <a class="btn btn-primary btn-sm" href="{{ url('/admin/asistencias-docente/'.$asignacione->id) }}">
+                                                    <i class="fas fa-user-check"></i> Asistencia docente
+                                                </a>
                                                 <a class="btn btn-success btn-sm" href="{{ url('/admin/asistencias/asignacion/'.$asignacione->id) }}">
                                                 <i class="fas fa-list-alt"></i> Ver asistencias</a>
                                             </center>

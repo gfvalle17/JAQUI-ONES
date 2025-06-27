@@ -72,6 +72,7 @@
                                                                                 <input type="radio" name="estado_asistencia[{{ $matriculado->estudiante->id }}]" value="PRESENTE" required> Presente
                                                                                 <input type="radio" name="estado_asistencia[{{ $matriculado->estudiante->id }}]" value="FALTA" required> Falta
                                                                                 <input type="radio" name="estado_asistencia[{{ $matriculado->estudiante->id }}]" value="TARDANZA" required> Tardanza
+                                                                                <input type="radio" name="estado_asistencia[{{ $matriculado->estudiante->id }}]" value="FJ" required> FJ
                                                                             </td>
                                                                         </tr>                                  
                                                                     @endforeach
@@ -236,6 +237,9 @@
                                                                                                 <input type="radio" 
                                                                                                     name="estado_asistencia[{{ $detalle->estudiante->id }}]" 
                                                                                                     value="TARDANZA" {{ $detalle->estado_asistencia=="TARDANZA" ? 'checked':'' }} required> Tardanza
+                                                                                                <input type="radio" 
+                                                                                                    name="estado_asistencia[{{ $detalle->estudiante->id }}]" 
+                                                                                                    value="FJ" {{ $detalle->estado_asistencia=="FJ" ? 'checked':'' }} required> FJ
                                                                                             </td>
                                                                                         </tr>                                  
                                                                                     @endforeach

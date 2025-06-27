@@ -64,7 +64,7 @@ return [
     |
     */
 
-    'logo' => '<small><b>"José Abelardo Quiñones"</b></small>',
+    'logo' => '<small><b>SIS Asistencias</b></small>',
     'logo_img' => 'vendor/adminlte/dist/img/insignia.jpg',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
