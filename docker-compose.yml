@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # Servicio de la aplicación Laravel (PHP)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sisasistencias-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - sisasistencias-network
+
+  # Servidor Web Nginx
+  nginx:
+    image: nginx:1.19-alpine
+    container_name: sisasistencias-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80" # Accede a la app en http://localhost:8000
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - sisasistencias-network
+
+  # Base de Datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: sisasistencias-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "33066:3306"
+    volumes:
+      - sisasistencias-db-data:/var/lib/mysql
+    networks:
+      - sisasistencias-network
+
+  # PhpMyAdmin para gestionar la base de datos
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: sisasistencias-phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - sisasistencias-network
+
+networks:
+  sisasistencias-network:
+    driver: bridge
+
+volumes:
+  sisasistencias-db-data:
+    driver: local

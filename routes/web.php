@@ -147,3 +147,15 @@ Route::get('/admin/asistencias-docente/{id}', [App\Http\Controllers\AsistenciaDo
 Route::get('/admin/asistencias-docentes/{id}/edit', [App\Http\Controllers\AsistenciaDocenteController::class, 'edit'])->name('admin.asistencias-docentes.edit');
 Route::delete('/admin/asistencias-docentes/{id}', [App\Http\Controllers\AsistenciaDocenteController::class, 'destroy'])->name('admin.asistencias-docentes.destroy');
 Route::put('/admin/asistencias-docentes/{id}', [App\Http\Controllers\AsistenciaDocenteController::class, 'update'])->name('admin.asistencias-docentes.update');
+
+// Ruta para mostrar la vista del calendario
+Route::get('/calendario', [App\Http\Controllers\HomeController::class, 'calendario'])->name('calendario')->middleware('auth');
+
+// En routes/web.php
+Route::get('/admin/horario-diario', [App\Http\Controllers\HorarioController::class, 'vistaDiaria'])
+    ->name('admin.horario.diario')
+    ->middleware(['auth', 'can:ADMINISTRADOR']); // Protegemos la ruta para que solo el admin pueda verla
+
+Route::get('/test-modal', function () {
+    return view('test_modal');
+});

@@ -335,5 +335,6 @@ class DatabaseSeeder extends Seeder
         Asignacion::create(['personal_id' => 1,'gestion_id' => 1,'nivel_id' => 3,'grado_id' => 13,'paralelo_id' => 26,'materia_id' => 4,'turno_id' => 1,'fecha_asignacion' => '2018-06-17']);
 
 
+        
     }
 }

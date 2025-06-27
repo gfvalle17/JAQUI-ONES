@@ -9,6 +9,7 @@ use App\Models\Personal;
 use App\Models\DetalleAsistencia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class AsistenciaController extends Controller
 {
@@ -22,13 +23,27 @@ class AsistenciaController extends Controller
 
         if( ($rol == 'ADMINISTRADOR') || ($rol == 'DIRECTOR') ){
             $asignaciones = Asignacion::all();
-            return view('admin.asistencias.index',compact('asignaciones'));
+            return view('admin.asistencias.index', compact('asignaciones'));
         }
 
         if($rol == 'DOCENTE'){
+            // =======================================================
+            // ### INICIO DE LAS LÍNEAS AÑADIDAS Y MODIFICADAS ###
+            // =======================================================
+
+            // 1. Añadimos la lógica para crear la fecha actual
+            Carbon::setLocale('es');
+            $fechaActual = Carbon::now()->translatedFormat('l, d \de F \de Y');
+
             $docente = Personal::where('usuario_id', $id_usuario)->first();
             $asignaciones = Asignacion::where('personal_id', $docente->id)->get();
-            return view('admin.asistencias.index_docente', compact('docente','asignaciones'));
+
+            // 2. Modificamos el return para pasar la nueva variable 'fechaActual' a la vista
+            return view('admin.asistencias.index_docente', compact('docente', 'asignaciones', 'fechaActual'));
+
+            // =======================================================
+            // ### FIN DE LAS LÍNEAS AÑADIDAS Y MODIFICADAS ###
+            // =======================================================
         }
 
         if($rol == 'ESTUDIANTE'){
@@ -42,12 +57,13 @@ class AsistenciaController extends Controller
     public function create($id)
     {
 
+        /*
         $ipPermitida = '::1'; // Reemplaza con tu IP real (la de tu red o celular compartido)
         $ipUsuario = request()->ip();
 
         if ($ipUsuario !== $ipPermitida) {
             abort(403, 'Acceso no autorizado desde esta red.');
-        }
+        }*/
 
         $asignacion = Asignacion::findOrFail($id);
         $docente = Personal::where('usuario_id', Auth::user()->id)->first();

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Role;
+use App\Models\User;
 
 class Personal extends Model
 {
@@ -32,6 +33,11 @@ class Personal extends Model
 
     public function asignaciones(){
         return $this->hasMany(Matriculacion::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
 }

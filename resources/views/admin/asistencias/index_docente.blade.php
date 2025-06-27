@@ -1,31 +1,37 @@
 @extends('adminlte::page')
 
+@section('title', 'Mis Asignaciones')
+
 @section('content_header')
-    <h1><b>Listado de asignaciones para asistencia de docente</b></h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="mb-0"><b>Listado de mis Asignaciones</b></h1>
+        <h5 class="mb-0 text-muted">
+            <i class="far fa-calendar-alt mr-1"></i>
+            {{ $fechaActual ?? now()->translatedFormat('l, d \de F \de Y') }}
+        </h5>
+    </div>
     <hr>
 @stop
 
 @section('content')
-
     <div class="row">
         <div class="col-md-12">
             <div class="card card-outline card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Asignaciones registradas</h3>
+                    <h3 class="card-title">Mis cursos y materias asignadas</h3>
                 </div>
                 <div class="card-body">
-                    
                     <table id="example1" class="table table-bordered table-striped table-hover table-sm">
                         <thead>
                             <tr>
-                                <th>Nro</th>
+                                <th style="text-align: center">Nro</th>
                                 <th>Turno</th>
                                 <th>Gestión</th>
                                 <th>Nivel</th>
                                 <th>Grado</th>
-                                <th>Sección</th>
+                                <th style="text-align: center">Sección</th>
                                 <th>Materia</th>
-                                <th>Acciones</th>
+                                <th style="text-align: center; min-width: 350px;">Acciones y Horarios</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -38,163 +44,130 @@
                                     <td>{{ $asignacione->grado->nombre }}</td>
                                     <td style="text-align: center">{{ $asignacione->paralelo->nombre }}</td>
                                     <td>{{ $asignacione->materia->nombre }}</td>
+                                    <td style="vertical-align: middle;">
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="mr-3" style="min-width: 180px;">
+                                                @forelse($asignacione->horarios->sortBy('dia_semana') as $horario)
+                                                    @php
+                                                        $diasMap = [1 => 'Lunes', 2 => 'Martes', 3 => 'Miércoles', 4 => 'Jueves', 5 => 'Viernes', 6 => 'Sábado', 7 => 'Domingo'];
+                                                    @endphp
+                                                    <div style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 3px; text-align: left;">
+                                                        <span class="badge badge-info mr-2" style="width: 85px; font-size: 0.8em;">
+                                                            {{ $diasMap[$horario->dia_semana] ?? '?' }}
+                                                        </span>
+                                                        <small style="font-weight: 500;">
+                                                            {{ \Carbon\Carbon::parse($horario->hora_inicio)->format('h:i A') }} - {{ \Carbon\Carbon::parse($horario->hora_fin)->format('h:i A') }}
+                                                        </small>
+                                                    </div>
+                                                @empty
+                                                    <small class="badge badge-warning"><i class="fas fa-times-circle"></i> Sin Horario</small>
+                                                @endforelse
+                                            </div>
+                                            <div class="d-flex flex-column">
+                                                {{-- Lógica de 3 estados para los botones --}}
+                                                @if ($asignacione->hasAttendanceToday())
+                                                    <button type="button" class="btn btn-success btn-sm mb-1" disabled>
+                                                        <i class="fas fa-check-circle"></i> Asistencia Registrada
+                                                    </button>
+                                                @elseif ($asignacione->isAttendanceMarkingActive())
+                                                    <button type="button" class="btn btn-primary btn-sm mb-1 abre-modal-asistencia" data-target="#modalAsistenciaDocente{{ $asignacione->id }}">
+                                                        <i class="fas fa-user-check"></i> Mi asistencia
+                                                    </button>
+                                                @else
+                                                    <button type="button" class="btn btn-secondary btn-sm mb-1" disabled>
+                                                        <i class="fas fa-lock"></i> Fuera de Horario
+                                                    </button>
+                                                @endif
 
-                                    <td>
-                                        <center>
-                                            @if ($asignacione->isAttendanceMarkingActive())
-                                                <button type="button" class="btn btn-primary btn-sm mb-1" data-toggle="modal" data-target="#modalAsistenciaDocente{{ $asignacione->id }}">
-                                                    <i class="fas fa-user-check"></i> Mi asistencia
-                                                </button>
-                                            @else
-                                                <button type="button" class="btn btn-secondary btn-sm mb-1" disabled title="Puede marcar asistencia solo durante el horario de clases">
-                                                    <i class="fas fa-clock"></i> Fuera de Horario
-                                                </button>
-                                            @endif
+                                                <a class="btn btn-info btn-sm" href="{{ url('/admin/asistencias/create/asignacion/'.$asignacione->id) }}">
+                                                    <i class="fas fa-list-alt"></i> Ver Asistencias
+                                                </a>
+                                            </div>
+                                        </div>
 
-                                            <a class="btn btn-success btn-sm" href="{{ url('/admin/asistencias/create/asignacion/'.$asignacione->id) }}">
-                                                <i class="fas fa-list-alt"></i> Ver asistencias
-                                            </a>
-                                        </center>
-
-                                        <div class="modal fade" id="modalAsistenciaDocente{{ $asignacione->id }}" tabindex="-1" role="dialog">
+                                        <div class="modal fade" id="modalAsistenciaDocente{{ $asignacione->id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ $asignacione->id }}" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
-                                                <form action="{{ url('/docente/asistencias-docente') }}" method="POST">
+                                                <form action="{{ route('docente.asistencia.store') }}" method="POST">
                                                     @csrf
                                                     <input type="hidden" name="asignacion_id" value="{{ $asignacione->id }}">
                                                     <div class="modal-content">
                                                         <div class="modal-header bg-primary text-white">
-                                                            <h5 class="modal-title">Registrar mi asistencia</h5>
-                                                            <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                                                            <h5 class="modal-title" id="modalLabel{{ $asignacione->id }}">Registrar Mi Asistencia</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
                                                         </div>
                                                         <div class="modal-body">
+                                                            <p><strong>Fecha:</strong> {{ now()->format('d/m/Y') }}</p>
+                                                            <p><strong>Curso:</strong> {{ $asignacione->materia->nombre }}</p>
+                                                            <hr>
                                                             <div class="form-group">
-                                                                <p><strong>Fecha de hoy:</strong> {{ \Carbon\Carbon::now('America/Lima')->format('d/m/Y') }}</p>
+                                                                <label>Mi estado:</label><br>
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input" type="radio" name="estado" id="estado_presente_{{ $asignacione->id }}" value="PRESENTE" required checked>
+                                                                    <label class="form-check-label" for="estado_presente_{{ $asignacione->id }}">Presente</label>
+                                                                </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label>Estado:</label><br>
-                                                                <input type="radio" name="estado" value="PRESENTE" required checked> Presente
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label>Observación (opcional):</label>
-                                                                <input type="text" name="observacion" class="form-control" placeholder="Ej: Ingreso 5 minutos tarde">
+                                                                <label for="observacion_{{ $asignacione->id }}">Observación (opcional):</label>
+                                                                <textarea class="form-control" name="observacion" id="observacion_{{ $asignacione->id }}" rows="2"></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                                            <button type="submit" class="btn btn-primary">Registrar</button>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                                            <button type="submit" class="btn btn-primary">Registrar Asistencia</button>
                                                         </div>
                                                     </div>
                                                 </form>
                                             </div>
                                         </div>
                                     </td>
-                                    </tr>                                   
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>
-
-                </div>
                 </div>
             </div>
+        </div>
     </div>
-
-@stop
-
-@section('css')
-{{-- Tu CSS original se mantiene igual --}}
-<style>
-    /*Fondo transparente y sin borde en el contenedor*/
-    #example1_wrapper .dt-buttons{
-        background-color: transparent;
-        box-shadow: none;
-        border: none;
-        display: flex;
-        justify-content: center; /* Centrar los botones */
-        gap: 10px; /* Espaciado entre botones */
-        margin-bottom: 15px; /* Separar botones de la tabla */
-    }
-
-    /* Estilo personalizado para los botones */
-    #example1_wrapper .btn {
-        color: #fff; /* Color del texto en blanco */
-        border-radius: 4px; /* Bordes redondeados */
-        padding: 5px 15px; /* Espaciado interno */
-        font-size: 14px; /* Tamaño de fuente */
-    }
-
-    /* Colores por tipo de botón */
-    .btn-danger { background-color: #dc3545; border: none; }
-    .btn-success { background-color: #28a745; border: none; }
-    .btn-info { background-color: #17a2b8; border: none; }
-    .btn-warning {background-color: #ffc107; color: #212559; border: none; }
-    .btn-default {background-color: #6e7176; color: #212559; border: none; }
-</style>
 @stop
 
 @section('js')
-{{-- Tu JS original se mantiene igual --}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            //$('#example1').DataTable(); // Descomenta si necesitas DataTables en esta vista
 
-<script>
-    $(function() {
-        $("#example1").DataTable({
-            "pageLength": 5,
-            "language": {
-                "emptyTable": "No hay información",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ Asignaciones",
-                "infoEmpty": "Mostrando 0 a 0 de 0 Asignaciones",
-                "infoFiltered": "(Filtrando de _MAX_total Asignaciones)",
-                "lengthMenu": "Mostrar _MENU_ Asignaciones",
-                "loadingRecords": "Cargando...",
-                "processing": "Procesando...",
-                "search": "Buscador:",
-                "zeroRecords": "Sin resultados encontrados",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            },
-            "responsive": true,
-            "lengthChange": true,
-            "autoWidth": false,
-            buttons: [
-                { text: '<i class="fas fa-copy"></i> COPIAR', extend: 'copy', className: 'btn btn-default' },
-                { text: '<i class="fas fa-file-pdf"></i> PDF', extend: 'pdf', className: 'btn btn-danger' },
-                { text: '<i class="fas fa-file-csv"></i> CSV', extend: 'csv', className: 'btn btn-info' },
-                { text: '<i class="fas fa-file-excel"></i> EXCEL', extend: 'excel', className: 'btn btn-success' },
-                { text: '<i class="fas fa-print"></i> IMPRIMIR', extend: 'print', className: 'btn btn-warning' },
-            ]
-        }).buttons().container().appendTo('#example1_wrapper .row:eq(0)');
-    });
-</script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            $('.abre-modal-asistencia').on('click', function() {
+                var targetModal = $(this).data('target');
+                $(targetModal).modal('show');
+            });
 
-@if(session('success'))
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: '{{ session('success') }}',
-        showConfirmButton: false,
-        timer: 2000,
-        toast: true,
-        position: 'top-end'
-    });
-</script>
-@endif
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: '{{ session("success") }}',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+            @endif
 
-@if(session('error'))
-<script>
-    Swal.fire({
-        icon: 'error',
-        title: '{{ session('error') }}',
-        showConfirmButton: false,
-        timer: 3000,
-        toast: true,
-        position: 'top-end'
-    });
-</script>
-@endif
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: '{{ session("error") }}',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                });
+            @endif
+        });
+    </script>
 @stop

@@ -1,167 +1,103 @@
 @extends('adminlte::page')
 
+@section('title', 'Padres de Familia')
+
 @section('content_header')
     <h1><b>Listado de padres de familia</b></h1>
     <hr>
 @stop
 
 @section('content')
-
     <div class="row">
         <div class="col-md-12">
             <div class="card card-outline card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Padres de familia registrados</h3>
-
-                        <div class="card-tools">
-                            <a href="{{ url('/admin/ppffs/create')}}" class="btn btn-primary"> Crear nuevo</a>
-
-                        </div>
-                        <!-- /card-tools -->
+                <div class="card-header">
+                    <h3 class="card-title">Padres de familia registrados</h3>
+                    <div class="card-tools">
+                        <a href="{{ url('/admin/ppffs/create')}}" class="btn btn-primary">Crear nuevo</a>
                     </div>
-                    <!-- /.card header -->
-                    <div class="card-body">
-                        
-                        <table id="example1" class="table table-bordered table-striped table-hover table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Nro</th>
-                                    <th>Padre de familia</th>
-                                    <th>DNI</th>
-                                    <th>Fecha de nacimiento</th>
-                                    <th>Parentesco</th>
-                                    <th>Ocupación</th>
-                                    <th>Dirección</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($ppffs as $ppff)
-                                    <tr>
-                                        <td style="text-align: center">{{ $loop->iteration }}</td>
-                                        <td>{{ $ppff->apellidos }} {{ $ppff->nombres }}</td>
-                                        <td>{{ $ppff->ci }}</td>
-                                        <td>{{ $ppff->fecha_nacimiento }}</td>
-                                        <td>{{ $ppff->telefono }}</td>
-                                        <td>{{ $ppff->parentesco }}</td>
-                                        <td>{{ $ppff->ocupacion }}</td>
-                                        <td>{{ $ppff->direccion }}</td>
-                                        <td>
-                                            <div class="row d-flex justify-content-center">
-                                                <a href="{{ url('/admin/ppffs/'.$ppff->id) }}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i> Ver</a>
-                                                <a href="{{ url('/admin/ppffs/'.$ppff->id.'/edit') }}" class="btn btn-success btn-sm"><i class="fas fa-pencil-alt"></i> Editar</a>
-                                            
-                                                <form action="{{ url('/admin/ppffs/'.$ppff->id )}}" method="post" id="miFormulario{{ $ppff->id }}">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="preguntar{{ $ppff->id }}(event)">
-                                                        <i class="fas fa-trash"></i> Eliminar
-                                                    </button>
-                                                </form>
-                                            </div>
-
-                                            <script>
-                                                function preguntar{{ $ppff->id }}(event) {
-                                                    event.preventDefault();
-
-                                                    Swal.fire({
-                                                        title: '¿Desea eliminar este registro?',
-                                                        text: '',
-                                                        icon: 'question',
-                                                        showDenyButton: true,
-                                                        confirmButtonText: 'Eliminar',
-                                                        confirmButtonColor: '#a5161d',
-                                                        denyButtonColor: '#270a0a',
-                                                        denyButtonText: 'Cancelar',
-                                                    }).then((result) => {
-                                                        if (result.isConfirmed) {
-                                                            // JavaScript puro para enviar el formulario
-                                                            document.getElementById('miFormulario{{ $ppff->id }}').submit();
-                                                        }
-                                                    });
-                                                }
-                                            </script>
-                                        </td>
-                                    </tr>                                  
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                    </div>
-                    <!-- /.card-body -->
                 </div>
-                <!-- /.card-->
+                <div class="card-body">
+                    <table id="example1" class="table table-bordered table-striped table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center;">Nro</th>
+                                <th>Padre de familia</th>
+                                <th>DNI</th>
+                                <th>Fecha de nacimiento</th>
+                                <th>Parentesco</th>
+                                <th>Ocupación</th>
+                                <th>Dirección</th>
+                                <th style="text-align: center;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($ppffs as $ppff)
+                                <tr>
+                                    <td style="text-align: center;">{{ $loop->iteration }}</td>
+                                    <td>{{ $ppff->nombres }} {{ $ppff->apellidos }}</td>
+                                    <td>{{ $ppff->ci ?? 'N/A' }}</td>  {{-- Usamos 'dni', no 'ci' --}}
+                                    <td>{{ $ppff->fecha_nacimiento }}</td>
+                                    <td>{{ $ppff->parentesco }}</td>
+                                    <td>{{ $ppff->ocupacion }}</td>
+                                    <td>{{ $ppff->direccion }}</td>
+                                    <td style="text-align: center;">
+                                        <div class="d-flex justify-content-center" style="gap: 5px;">
+                                            {{-- He corregido los enlaces para usar 'route' y el formulario de borrado --}}
+                                            <a href="{{ route('admin.ppffs.show', $ppff) }}" class="btn btn-info btn-sm" title="Ver"><i class="fas fa-eye"></i></a>
+                                            <a href="{{ route('admin.ppffs.edit', $ppff) }}" class="btn btn-primary btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>
+                                            <form action="{{ route('admin.ppffs.destroy', $ppff) }}" method="post" class="form-eliminar">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-
 @stop
 
 @section('css')
-<style>
-    /*Fondo transparente y sin borde en el contenedor*/
-    #example1_wrapper .dt-buttons{
-        background-color: transparent;
-        box-shadow: none;
-        border: none;
-        display: flex;
-        justify-content: center; /* Centrar los botones */
-        gap: 10px; /* Espaciado entre botones */
-        margin-bottom: 15px; /* Separar botones de la tabla */
-    }
-
-    /* Estilo personalizado para los botones */
-    #example1_wrapper .btn {
-        color: #fff; /* Color del texto en blanco */
-        border-radius: 4px; /* Bordes redondeados */
-        padding: 5px 15px; /* Espaciado interno */
-        font-size: 14px; /* Tamaño de fuente */
-    }
-
-    /* Colores por tipo de botón */
-    .btn-danger { background-color: #dc3545; border: none; }
-    .btn-success { background-color: #28a745; border: none; }
-    .btn-info { background-color: #17a2b8; border: none; }
-    .btn-warning {background-color: #ffc107; color: #212559; border: none; }
-    .btn-default {background-color: #6e7176; color: #212559; border: none; }
-</style>
+    {{-- La sección de CSS no necesita cambios, pero es buena práctica tenerla --}}
 @stop
 
 @section('js')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    {{-- Este script único maneja la confirmación de borrado para todos los formularios --}}
+    <script>
+        $(document).ready(function() {
+            // Inicialización de DataTables
+            $('#example1').DataTable({
+                "responsive": true,
+                "lengthChange": true,
+                "autoWidth": false,
+                // Puedes añadir la configuración de botones aquí si la necesitas
+            });
 
-<script>
-    $(function() {
-        $("#example1").DataTable({
-            "pageLength": 5,
-            "language": {
-                "emptyTable": "No hay información",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ Padres de familia",
-                "infoEmpty": "Mostrando 0 a 0 de 0 Padres de familia",
-                "infoFiltered": "(Filtrando de _MAX_total Padres de familia)",
-                "lengthMenu": "Mostrar _MENU_ Padres de familia",
-                "loadingRecords": "Cargando...",
-                "processing": "Procesando...",
-                "search": "Buscador:",
-                "zeroRecords": "Sin resultados encontrados",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Último",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                }
-            },
-            "responsive": true,
-            "lengthChange": true,
-            "autoWidth": false,
-            buttons: [
-                { text: '<i class="fas fa-copy"></i> COPIAR', extend: 'copy', className: 'btn btn-default' },
-                { text: '<i class="fas fa-file-pdf"></i> PDF', extend: 'pdf', className: 'btn btn-danger' },
-                { text: '<i class="fas fa-file-csv"></i> CSV', extend: 'csv', className: 'btn btn-info' },
-                { text: '<i class="fas fa-file-excel"></i> EXCEL', extend: 'excel', className: 'btn btn-success' },
-                { text: '<i class="fas fa-print"></i> IMPRIMIR', extend: 'print', className: 'btn btn-warning' },
-            ]
-        }).buttons().container().appendTo('#example1_wrapper .row:eq(0)');
-    });
-</script>
+            // Script para la confirmación de borrado con SweetAlert2
+            $('.form-eliminar').submit(function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡No podrás revertir esta acción!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: '¡Sí, bórralo!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+        });
+    </script>
 @stop
