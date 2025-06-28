@@ -11,100 +11,82 @@ class Asignacion extends Model
 {
     use HasFactory;
 
+    // Eliminamos la propiedad $with para tener más control en el controlador.
+    // protected $with = [...];
+
     protected $guarded = [];
 
-    // --- RELACIONES ---
+    // --- RELACIONES (VERSIÓN CORREGIDA Y EXPLÍCITA) ---
 
     public function personal()
     {
-        return $this->belongsTo(Personal::class);
+        // Le decimos explícitamente que la llave foránea es 'personal_id'.
+        return $this->belongsTo(Personal::class, 'personal_id');
     }
 
     public function gestion()
     {
-        return $this->belongsTo(Gestion::class);
+        return $this->belongsTo(Gestion::class, 'gestion_id');
     }
 
     public function nivel()
     {
-        return $this->belongsTo(Nivel::class);
+        return $this->belongsTo(Nivel::class, 'nivel_id');
     }
 
     public function grado()
     {
-        return $this->belongsTo(Grado::class);
+        return $this->belongsTo(Grado::class, 'grado_id');
     }
 
     public function paralelo()
     {
-        return $this->belongsTo(Paralelo::class);
+        return $this->belongsTo(Paralelo::class, 'paralelo_id');
     }
 
     public function materia()
     {
-        return $this->belongsTo(Materia::class);
+        return $this->belongsTo(Materia::class, 'materia_id');
     }
 
     public function turno()
     {
-        return $this->belongsTo(Turno::class);
+        return $this->belongsTo(Turno::class, 'turno_id');
     }
 
     public function horarios()
     {
-        return $this->hasMany(Horario::class);
+        return $this->hasMany(Horario::class, 'asignacion_id');
     }
 
-    // --- FUNCIONES DE LÓGICA DE ASISTENCIA ---
+    // --- FUNCIONES DE LÓGICA DE ASISTENCIA (SIN CAMBIOS) ---
 
-    /**
-     * Verifica si ya existe un registro de asistencia para esta
-     * asignación en la fecha actual.
-     */
     public function hasAttendanceToday()
     {
-        $timezone = 'America/Lima'; // O la zona horaria de tu país
-        // Usamos whereDate para comparar solo la parte de la fecha (YYYY-MM-DD)
+        $timezone = 'America/Lima';
         return AsistenciaDocente::where('asignacion_id', $this->id)
                                 ->whereDate('created_at', Carbon::today($timezone))
                                 ->exists();
     }
 
-    /**
-     * Revisa si el botón de "Mi asistencia" debe estar activo.
-     * Solo se activa si está en horario Y si no se ha marcado ya la asistencia.
-     */
     public function isAttendanceMarkingActive()
     {
-        // PRIMERA VERIFICACIÓN: Si ya se marcó hoy, no puede estar activo.
         if ($this->hasAttendanceToday()) {
             return false;
         }
-
-        // SEGUNDA VERIFICACIÓN: Revisa si está dentro del horario permitido.
         try {
             $timezone = 'America/Lima';
             $now = Carbon::now($timezone);
-            $todayWeekDay = $now->dayOfWeekIso; // 1 para Lunes, 7 para Domingo
-
+            $todayWeekDay = $now->dayOfWeekIso;
             $horarioDeHoy = $this->horarios()->where('dia_semana', $todayWeekDay)->first();
 
-            if (!$horarioDeHoy) {
-                return false;
-            }
+            if (!$horarioDeHoy) return false;
+            
+            $horaInicio = Carbon::parse($horarioDeHoy->hora_inicio, $timezone)->subMinutes(15);
+            $horaFin = Carbon::parse($horarioDeHoy->hora_fin, $timezone)->addMinutes(10);
 
-            $minutosAntes = 15;
-            $minutosDespues = 10;
-
-            $horaInicio = Carbon::parse($horarioDeHoy->hora_inicio, $timezone);
-            $horaFin = Carbon::parse($horarioDeHoy->hora_fin, $timezone);
-
-            return $now->between(
-                $horaInicio->subMinutes($minutosAntes),
-                $horaFin->addMinutes($minutosDespues)
-            );
+            return $now->between($horaInicio, $horaFin);
         } catch (\Exception $e) {
-            // Si algo falla, devolvemos false por seguridad.
             return false;
         }
     }

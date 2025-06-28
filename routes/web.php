@@ -130,8 +130,12 @@ Route::post('/admin/asignaciones/create', [App\Http\Controllers\AsignacionContro
 Route::get('/admin/asignaciones/buscar_docente/{id}', [App\Http\Controllers\AsignacionController::class, 'buscar_docente'])->name('admin.asignaciones.buscar_docente')->middleware('auth','can:admin.asignaciones.buscar_docente');
 Route::get('/admin/asignaciones/{id}', [App\Http\Controllers\AsignacionController::class, 'show'])->name('admin.asignaciones.show')->middleware('auth','can:admin.asignaciones.show');
 Route::get('/admin/asignaciones/{id}/edit', [App\Http\Controllers\AsignacionController::class, 'edit'])->name('admin.asignaciones.edit')->middleware('auth','can:admin.asignaciones.edit');
-Route::put('/admin/asignaciones/{id}/edit', [App\Http\Controllers\AsignacionController::class, 'update'])->name('admin.asignaciones.update')->middleware('auth','can:admin.asignaciones.update');
+Route::put('/admin/asignaciones/{id}', [App\Http\Controllers\AsignacionController::class, 'update'])->name('admin.asignaciones.update');
 Route::delete('/admin/asignaciones/{id}/edit', [App\Http\Controllers\AsignacionController::class, 'destroy'])->name('admin.asignaciones.destroy')->middleware('auth','can:admin.asignaciones.destroy');
+Route::get('/admin/asignaciones/get-grados/{nivel_id}', [App\Http\Controllers\AsignacionController::class, 'getGrados']);
+Route::get('/admin/asignaciones/get-paralelos/{grado_id}', [App\Http\Controllers\AsignacionController::class, 'getParalelos']);
+Route::get('/admin/get-grados/{nivel_id}', [App\Http\Controllers\AsignacionController::class, 'getGrados'])->name('admin.getGrados');
+Route::get('/admin/get-paralelos/{grado_id}', [App\Http\Controllers\AsignacionController::class, 'getParalelos'])->name('admin.getParalelos');
 
 //rutas para asistencias del estudiante
 Route::get('/admin/asistencias', [App\Http\Controllers\AsistenciaController::class, 'index'])->name('admin.asistencias.index')->middleware('auth','can:admin.asistencias.index');
@@ -159,3 +163,6 @@ Route::get('/admin/horario-diario', [App\Http\Controllers\HorarioController::cla
 Route::get('/test-modal', function () {
     return view('test_modal');
 });
+
+Route::get('get-grados/{nivel}', [AsignacionController::class, 'getGrados'])->name('asignaciones.getGrados');
+Route::get('get-paralelos/{grado}', [AsignacionController::class, 'getParalelos'])->name('asignaciones.getParalelos');
