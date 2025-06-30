@@ -21,10 +21,13 @@ pipeline {
         stage('3. Análisis con SonarQube') {
             steps {
                 script {
-                    // 'SonarQubeServer' es el nombre que configuraste en Jenkins
+                    // Usamos la conexión al servidor que ya tenías
                     withSonarQubeEnv('SonarQubeServer') {
-                        // El scanner usa el archivo sonar-project.properties que creaste
-                        sh 'sonar-scanner'
+                        // 1. Le decimos a Jenkins que use la herramienta que configuramos
+                        def sonarScannerTool = tool 'SonarScannerDefault'
+                        
+                        // 2. Ejecutamos el scanner usando la ruta exacta de la herramienta
+                        sh "${sonarScannerTool}/bin/sonar-scanner"
                     }
                 }
             }
