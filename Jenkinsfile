@@ -4,18 +4,40 @@ pipeline {
     stages {
         stage('1. Clonar Código') {
             steps {
-                // Jenkins ya clona el código automáticamente con la configuración que hicimos,
-                // pero este paso confirma que todo funciona.
                 checkout scm
                 echo '¡Código clonado desde GitHub exitosamente!'
             }
         }
+
         stage('2. Verificar Entorno Docker') {
             steps {
-                // Este es nuestro "Hola Mundo". Le pedimos a Jenkins que ejecute un comando
-                // de Docker para confirmar que la integración que hicimos funciona.
                 sh 'docker --version'
                 sh 'docker compose --version'
+            }
+        }
+
+        // --- Etapas de SonarQube añadidas ---
+
+        stage('3. Análisis con SonarQube') {
+            steps {
+                script {
+                    // 'SonarQubeServer' es el nombre que configuraste en Jenkins
+                    withSonarQubeEnv('SonarQubeServer') {
+                        // El scanner usa el archivo sonar-project.properties que creaste
+                        sh 'sonar-scanner'
+                    }
+                }
+            }
+        }
+
+        stage('4. Comprobar Quality Gate') {
+            steps {
+                // Espera hasta 1 hora a que SonarQube termine el análisis
+                timeout(time: 1, unit: 'HOURS') {
+                    // Si el código no cumple con los estándares de calidad,
+                    // el pipeline se detendrá y fallará.
+                    waitForQualityGate abortPipeline: true
+                }
             }
         }
     }
