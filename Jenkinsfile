@@ -20,14 +20,14 @@ pipeline {
 
         stage('3. Análisis con SonarQube') {
             steps {
-                script {
-                    // Usamos la conexión al servidor que ya tenías
+                // Usamos withCredentials para acceder al token de forma segura
+                withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                    // El wrapper withSonarQubeEnv sigue siendo necesario para la conexión
                     withSonarQubeEnv('SonarQubeServer') {
-                        // 1. Le decimos a Jenkins que use la herramienta que configuramos
                         def sonarScannerTool = tool 'SonarScannerDefault'
                         
-                        // 2. Ejecutamos el scanner usando la ruta exacta de la herramienta
-                        sh "${sonarScannerTool}/bin/sonar-scanner"
+                        // Añadimos el token al comando del scanner con -Dsonar.login
+                        sh "${sonarScannerTool}/bin/sonar-scanner -Dsonar.login=${SONAR_TOKEN}"
                     }
                 }
             }
