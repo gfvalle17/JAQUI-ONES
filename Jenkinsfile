@@ -20,14 +20,15 @@ pipeline {
 
         stage('3. Análisis con SonarQube') {
             steps {
-                // Usamos withCredentials para acceder al token de forma segura
-                withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
-                    // El wrapper withSonarQubeEnv sigue siendo necesario para la conexión
-                    withSonarQubeEnv('SonarQubeServer') {
-                        def sonarScannerTool = tool 'SonarScannerDefault'
-                        
-                        // Añadimos el token al comando del scanner con -Dsonar.login
-                        sh "${sonarScannerTool}/bin/sonar-scanner -Dsonar.login=${SONAR_TOKEN}"
+                // Envolvemos toda la lógica en un bloque 'script'
+                script {
+                    withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                        withSonarQubeEnv('SonarQubeServer') {
+                            def sonarScannerTool = tool 'SonarScannerDefault'
+                            
+                            // Añadimos el token al comando del scanner
+                            sh "${sonarScannerTool}/bin/sonar-scanner -Dsonar.login=${SONAR_TOKEN}"
+                        }
                     }
                 }
             }
