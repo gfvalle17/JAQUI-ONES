@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Models\Role;
-use App\Models\User;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Personal extends Model
+class Personal extends Model implements Auditable
 {
+    use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+    
     protected $fillable = [
         'usuario_id',
         'tipo',

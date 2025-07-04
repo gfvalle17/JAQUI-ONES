@@ -27,23 +27,20 @@ class AsistenciaController extends Controller
         }
 
         if($rol == 'DOCENTE'){
-            // =======================================================
-            // ### INICIO DE LAS LÍNEAS AÑADIDAS Y MODIFICADAS ###
-            // =======================================================
-
-            // 1. Añadimos la lógica para crear la fecha actual
             Carbon::setLocale('es');
-            $fechaActual = Carbon::now()->translatedFormat('l, d \de F \de Y');
-
+            $fechaActual = Carbon::now('America/Lima')->translatedFormat('l, d \de F \de Y');
             $docente = Personal::where('usuario_id', $id_usuario)->first();
             $asignaciones = Asignacion::where('personal_id', $docente->id)->get();
 
-            // 2. Modificamos el return para pasar la nueva variable 'fechaActual' a la vista
-            return view('admin.asistencias.index_docente', compact('docente', 'asignaciones', 'fechaActual'));
+            $asignacion_ids = $asignaciones->pluck('id');
 
-            // =======================================================
-            // ### FIN DE LAS LÍNEAS AÑADIDAS Y MODIFICADAS ###
-            // =======================================================
+            $asistenciasHoy = Asistencia::whereIn('asignacion_id', $asignacion_ids)
+                                        ->whereDate('fecha', Carbon::today('America/Lima'))
+                                        ->pluck('asignacion_id')
+                                        ->unique()
+                                        ->toArray();
+
+            return view('admin.asistencias.index_docente', compact('docente', 'asignaciones', 'fechaActual', 'asistenciasHoy'));
         }
 
         if($rol == 'ESTUDIANTE'){
@@ -56,15 +53,6 @@ class AsistenciaController extends Controller
      */
     public function create($id)
     {
-
-        /*
-        $ipPermitida = '::1'; // Reemplaza con tu IP real (la de tu red o celular compartido)
-        $ipUsuario = request()->ip();
-
-        if ($ipUsuario !== $ipPermitida) {
-            abort(403, 'Acceso no autorizado desde esta red.');
-        }*/
-
         $asignacion = Asignacion::findOrFail($id);
         $docente = Personal::where('usuario_id', Auth::user()->id)->first();
         $asistencias = Asistencia::with('detalleAsistencias')->where('asignacion_id', $id)->get();
@@ -86,8 +74,6 @@ class AsistenciaController extends Controller
      */
     public function store(Request $request)
     {
-        //$datos = request()->all();
-        //return response()->json($datos);
         $request->validate([
             'asignacion_id' => 'required',
             'fecha' => 'required|date',
@@ -123,26 +109,22 @@ class AsistenciaController extends Controller
     {
         $asignacion = Asignacion::findOrFail($id);
 
-        $asistencias = Asistencia::with('detalleAsistencias')
-        ->where('asignacion_id', $id)
-        ->orderBy('fecha','Desc') //Ordenar por fecha de forma descendente
-        ->get();
+        $asistencias = Asistencia::with('detalleAsistencias.estudiante')
+                                ->where('asignacion_id', $id)
+                                ->orderBy('fecha', 'desc')
+                                ->get();
 
-        $estudiantes = $asistencias->flatMap(function ($asistencia){
-            return $asistencia->detalleAsistencias->pluck('estudiante')->filter();
-        })->unique('id')->sortBy('apellidos');
-
-        $fechas = $asistencias->pluck('fecha')->unique()->sort();
-
-        return view('admin.asistencias.show', compact('asistencias','asignacion','estudiantes','fechas'));
+        return view('admin.asistencias.show', compact('asistencias', 'asignacion'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Asistencia $asistencia)
+    public function edit($id)
     {
-        //
+        $asistencia = Asistencia::with('detalleAsistencias.estudiante', 'asignacion')->findOrFail($id);
+        
+        return view('admin.asistencias.edit', compact('asistencia'));
     }
 
     /**
@@ -150,8 +132,6 @@ class AsistenciaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //$datos = request()->all();
-        //return response()->json($datos);
         $request->validate([
             'asignacion_id' => 'required',
             'fecha' => 'required|date',
@@ -173,9 +153,12 @@ class AsistenciaController extends Controller
             ->update(['estado_asistencia' => $estado]);
         }
 
-        return redirect()->back()
-        ->with('mensaje', 'Se actualizó la asistencia')
-        ->with('icono', 'success');
+        // ======================= ESTA ES LA LÍNEA CORREGIDA =======================
+        // Redirige a la vista del "Historial de asistencias" (la que usas como 'show').
+        return redirect()->route('admin.asistencias.show', $asistencia->asignacion_id)
+                         ->with('mensaje', 'Se actualizó la asistencia correctamente')
+                         ->with('icono', 'success');
+        // =========================================================================
     }
 
     /**
@@ -184,8 +167,8 @@ class AsistenciaController extends Controller
     public function destroy($id)
     {
         $asistencia = Asistencia::findOrFail($id);
-        $asistencia->detalleAsistencias()->delete(); //Eliminar los detalles de asistencia asociados
-        $asistencia->delete(); //Eliminar la asistencia
+        $asistencia->detalleAsistencias()->delete();
+        $asistencia->delete();
 
         return redirect()->back()
         ->with('mensaje', 'Se eliminó la asistencia')

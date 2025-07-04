@@ -8,10 +8,10 @@ use App\Models\Gestion;
 use App\Models\Materia;
 use App\Models\Matriculacion;
 use App\Models\Nivel;
+use App\Models\Grado;
+use App\Models\Paralelo;
 use App\Models\Personal;
 use App\Models\Turno;
-use App\Models\Grado;  
-use App\Models\Paralelo;
 use Illuminate\Http\Request;
 
 class AsignacionController extends Controller
@@ -21,7 +21,7 @@ class AsignacionController extends Controller
      */
     public function index()
     {
-        $asignaciones = Asignacion::with('personal','turno','gestion','nivel','grado','paralelo','materia')->get();
+        $asignaciones = Asignacion::all();
         return view('admin.asignaciones.index', compact('asignaciones'));
     }
 
@@ -42,13 +42,13 @@ class AsignacionController extends Controller
     {
         $docente = Personal::with('usuario','formaciones')->find($id);
 
-       if(!$docente){
+        if(!$docente){
             return response()->json(['error','Docente no encontrado']);
         }
 
         $docente->foto_url = url($docente->foto);
+
         return response()->json($docente);
-        
     }
 
     /**
@@ -103,32 +103,38 @@ class AsignacionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Asignacion $asignacione)
+    public function show($id)
     {
-        $asignacione->load('personal', 'materia', 'turno', 'gestion', 'nivel', 'grado', 'paralelo');
-        return view('admin.asignaciones.show', compact('asignacione'));
+        $asignacion = Asignacion::with('personal','personal.formaciones','turno','gestion','nivel','grado','paralelo','materia')->findOrFail($id);
+        return view('admin.asignaciones.show', compact('asignacion'));
     }
 
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Asignacion $asignacione)
+    public function edit($id)
     {
+        $asignacion = Asignacion::with('personal','personal.formaciones','turno','gestion','nivel','grado','paralelo','materia')->findOrFail($id);
         $gestiones = Gestion::all();
         $niveles = Nivel::all();
+        $grados = Grado::where('nivel_id', $asignacion->nivel_id)->get();
+        $paralelos = Paralelo::where('grado_id', $asignacion->grado_id)->get();
         $turnos = Turno::all();
         $docentes = Personal::where('tipo', 'docente')->get();
         $materias = Materia::all();
-        return view('admin.asignaciones.edit', compact('asignacione', 'docentes', 'turnos', 'gestiones', 'niveles', 'materias'));
+
+        return view('admin.asignaciones.edit', compact('asignacion', 'docentes', 'turnos', 'gestiones', 'niveles', 'materias','grados','paralelos'));
     }
 
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Asignacion $asignacione)
+    public function update(Request $request, $id)
     {
+        $asignacion = Asignacion::findOrFail($id);
+
         $request->validate([
             'personal_id' => 'required',
             'turno_id' => 'required',
@@ -136,11 +142,36 @@ class AsignacionController extends Controller
             'nivel_id' => 'required',
             'grado_id' => 'required',
             'paralelo_id' => 'required',
-            'fecha_asignacion' => 'required|date',
+            'fecha_asignacion' => 'required',
             'materia_id' => 'required',
         ]);
+        
+        $asignacion_duplicado = Asignacion::where('personal_id', $request->personal_id)
+            ->where('turno_id', $request->turno_id)
+            ->where('gestion_id', $request->gestion_id)
+            ->where('nivel_id', $request->nivel_id)
+            ->where('grado_id', $request->grado_id)
+            ->where('paralelo_id', $request->paralelo_id)
+            ->where('materia_id', $request->materia_id)
+            ->where('id', '!=', $id)
+            ->exists();
 
-        $asignacione->update($request->all());
+        if ($asignacion_duplicado) {
+            return redirect()->back()->with([
+                'mensaje' => 'El docente ya tiene la asignación en el turno, gestión, nivel, grado y paralelo',
+                'icono' => 'error',
+            ]);
+        }
+
+        $asignacion->personal_id = $request->personal_id;
+        $asignacion->turno_id = $request->turno_id;
+        $asignacion->gestion_id = $request->gestion_id;
+        $asignacion->nivel_id = $request->nivel_id;
+        $asignacion->grado_id = $request->grado_id;
+        $asignacion->paralelo_id = $request->paralelo_id;
+        $asignacion->fecha_asignacion = $request->fecha_asignacion;
+        $asignacion->materia_id = $request->materia_id;
+        $asignacion->save();
 
         return redirect()->route('admin.asignaciones.index')->with([
             'mensaje' => 'Asignación actualizada correctamente',
@@ -148,31 +179,15 @@ class AsignacionController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Asignacion $asignacione)
+
+    public function destroy($id)
     {
-        $asignacione->delete();
+        $asignacion = Asignacion::findOrFail($id);
+        $asignacion->delete();
 
         return redirect()->route('admin.asignaciones.index')->with([
             'mensaje' => 'Asignación eliminada correctamente',
             'icono' => 'success',
         ]);
-    }
-
-    public function getGrados($nivel_id)
-    {
-        $grados = Grado::where('nivel_id', $nivel_id)->pluck('nombre', 'id');
-        return response()->json($grados);
-    }
-
-    /**
-     * Devuelve los paralelos de un grado en formato JSON para AJAX.
-     */
-    public function getParalelos($grado_id)
-    {
-        $paralelos = Paralelo::where('grado_id', $grado_id)->pluck('nombre', 'id');
-        return response()->json($paralelos);
     }
 }

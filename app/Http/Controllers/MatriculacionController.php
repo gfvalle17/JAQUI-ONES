@@ -11,7 +11,8 @@ use App\Models\Matriculacion;
 use App\Models\Nivel;
 use App\Models\Paralelo;
 use App\Models\Turno;
-use Barryvdh\DomPDF\Facade\PDF;
+// CORRECCIÓN 1: Se cambió el nombre de la clase de 'PDF' a 'Pdf'.
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class MatriculacionController extends Controller
@@ -78,13 +79,8 @@ class MatriculacionController extends Controller
         return response()->json($paralelos);
     }
 
-
-
-
     public function store(Request $request)
     {
-        //$datos = request()->all();
-        //return response()->json($datos);
         $request->validate([
             'estudiante_id' => 'required',
             'turno_id' => 'required',
@@ -131,12 +127,14 @@ class MatriculacionController extends Controller
         $configuracion = Configuracion::first();
         $matricula = Matriculacion::with('estudiante.ppff','turno','gestion','nivel','grado','paralelo')->find($id);
 
-        $pdf = PDF::loadView('admin.matriculaciones.pdf',compact('configuracion','matricula'));
-        $pdf->setPaper('letter','protrait');
+        // CORRECCIÓN 2: Se cambió la llamada de 'PDF' a 'Pdf'.
+        $pdf = Pdf::loadView('admin.matriculaciones.pdf',compact('configuracion','matricula'));
+        // CORRECCIÓN 3: Se corrigió el error de tipeo de 'protrait' a 'portrait'.
+        $pdf->setPaper('letter','portrait');
         $pdf->setOptions(['defaultFont' => 'sans-serif']);
         $pdf->setOptions(['isRemoteEnabled' => true]);
-        return $pdf->stream('matriculas.pdf');
-
+        
+        // CORRECCIÓN 4: Se eliminó la línea de return duplicada.
         return $pdf->stream('matriculas.pdf');
     }
 
@@ -147,7 +145,6 @@ class MatriculacionController extends Controller
     {
         $matricula = Matriculacion::with('estudiante.ppff','estudiante.matriculaciones','turno','gestion','nivel','grado','paralelo')->find($id);
         return view('admin.matriculaciones.show',compact('matricula'));
-
     }
 
     /**
@@ -189,11 +186,12 @@ class MatriculacionController extends Controller
         ->where('nivel_id',$request->nivel_id)
         ->where('grado_id',$request->grado_id)
         ->where('paralelo_id',$request->paralelo_id)
+        ->where('id', '!=', $id) // Se añade esta condición para no compararse a sí mismo
         ->exists();
 
         if($estudiante_duplicado){
             return redirect()->back()->with([
-                'mensaje' => 'El estudiante ya esta matriculado',
+                'mensaje' => 'El estudiante ya esta matriculado en las mismas condiciones',
                 'icono' => 'error',
             ]);
         }

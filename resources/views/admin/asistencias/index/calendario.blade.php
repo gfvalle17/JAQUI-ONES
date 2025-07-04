@@ -40,56 +40,43 @@
 {{-- Paquete de idioma español --}}
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core/locales/es.global.min.js"></script>
 
-{{-- En resources/views/admin/asistencias/index/calendario.blade.php --}}
-
-@section('js')
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core/locales/es.global.min.js"></script>
-
-@section('js')
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core/locales/es.global.min.js"></script>
-
-{{-- En resources/views/admin/asistencias/index/calendario.blade.php --}}
-
-@section('js')
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core/locales/es.global.min.js"></script>
-
-{{-- En resources/views/admin/asistencias/index/calendario.blade.php --}}
-
-@section('js')
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.14/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core/locales/es.global.min.js"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendario');
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            // --- Configuración básica que ya teníamos ---
-            locale: 'es',
+            // ----------- CONFIGURACIÓN BÁSICA -----------
             initialView: 'timeGridWeek',
+            locale: 'es',
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek'
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
-            dayHeaderFormat: { weekday: 'long' },
-            height: 'auto',
 
-            // --- Carga de eventos (cursos) ---
+            // ### LÍNEA AÑADIDA ###
+            // Esto mostrará el nombre completo del día en los encabezados (ej: "miércoles")
+            dayHeaderFormat: { weekday: 'long' },
+
+            slotMinTime: '07:00:00',
+            slotMaxTime: '20:00:00',
+
+            // ----------- EVENTOS -----------
             events: {!! $eventos !!},
 
-            // ### LÓGICA DE CLIC SIMPLIFICADA ###
-            // Ahora, el clic en un evento funciona igual para todos los roles (Admin y Docente)
+            // ----------- APARIENCIA -----------
+            eventColor: '#378006',
+            height: 'auto',
+
+            // ----------- FUNCIONALIDAD EXTRA (OPCIONAL) -----------
+            dateClick: function(info) {
+                // console.log('Hiciste clic en: ' + info.dateStr);
+            },
             eventClick: function(info) {
-                // Prevenimos que el navegador siga el enlace por sí solo (para evitar doble carga)
-                info.jsEvent.preventDefault(); 
-                
-                // Si el evento tiene una URL (y todos la tienen), redirigimos a ella
+                // Prevenimos la alerta si el evento ya tiene una URL
                 if (info.event.url) {
-                    window.location.href = info.event.url;
+                    return;
                 }
+                alert('Curso: ' + info.event.title);
             }
         });
 

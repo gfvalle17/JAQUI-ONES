@@ -1,9 +1,10 @@
 services:
+  # Servicio de la aplicación Laravel (PHP)
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: sisasistencias-appA
+    container_name: sisasistencias-app
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
@@ -11,6 +12,7 @@ services:
     networks:
       - sisasistencias-network
 
+  # Servidor Web Nginx
   nginx:
     image: nginx:1.19-alpine
     container_name: sisasistencias-nginx
@@ -25,6 +27,7 @@ services:
     networks:
       - sisasistencias-network
 
+  # Base de Datos MySQL
   db:
     image: mysql:8.0
     container_name: sisasistencias-db
@@ -41,6 +44,7 @@ services:
     networks:
       - sisasistencias-network
 
+  # PhpMyAdmin para gestionar la base de datos
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: sisasistencias-phpmyadmin
@@ -55,6 +59,8 @@ services:
       - db
     networks:
       - sisasistencias-network
+
+  # --- Servicios de SonarQube añadidos ---
 
   sonarqube:
     image: sonarqube:9.9-community
@@ -88,26 +94,12 @@ services:
     networks:
       - sisasistencias-network
 
-  jenkins:
-    image: jenkins/jenkins:lts-jdk17
-    container_name: sisasistencias-jenkins
-    privileged: true
-    user: root
-    restart: unless-stopped
-    ports:
-      - "8081:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins-data:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /usr/bin/docker:/usr/bin/docker
-    networks:
-      - sisasistencias-network
-
+# --- Redes ---
 networks:
   sisasistencias-network:
     driver: bridge
 
+# --- Volúmenes ---
 volumes:
   sisasistencias-db-data:
     driver: local
@@ -118,6 +110,4 @@ volumes:
   sonarqube-logs:
     driver: local
   sonarqube-db-data:
-    driver: local
-  jenkins-data:
     driver: local

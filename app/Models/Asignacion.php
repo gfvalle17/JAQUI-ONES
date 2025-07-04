@@ -6,21 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use App\Models\AsistenciaDocente;
+// 1. IMPORTAMOS EL CONTRATO DE AUDITORÍA
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Asignacion extends Model
+// 2. IMPLEMENTAMOS EL CONTRATO EN LA CLASE
+class Asignacion extends Model implements Auditable
 {
     use HasFactory;
-
-    // Eliminamos la propiedad $with para tener más control en el controlador.
-    // protected $with = [...];
+    // 3. USAMOS EL TRAIT QUE HACE TODA LA MAGIA
+    use \OwenIt\Auditing\Auditable;
 
     protected $guarded = [];
 
-    // --- RELACIONES (VERSIÓN CORREGIDA Y EXPLÍCITA) ---
+    // --- RELACIONES ---
 
     public function personal()
     {
-        // Le decimos explícitamente que la llave foránea es 'personal_id'.
         return $this->belongsTo(Personal::class, 'personal_id');
     }
 
@@ -59,7 +60,7 @@ class Asignacion extends Model
         return $this->hasMany(Horario::class, 'asignacion_id');
     }
 
-    // --- FUNCIONES DE LÓGICA DE ASISTENCIA (SIN CAMBIOS) ---
+    // --- FUNCIONES DE LÓGICA DE ASISTENCIA ---
 
     public function hasAttendanceToday()
     {
@@ -69,25 +70,26 @@ class Asignacion extends Model
                                 ->exists();
     }
 
-    public function isAttendanceMarkingActive()
+    /**
+     * Verifica si la asistencia se puede marcar en el momento actual.
+     * VERSIÓN CORREGIDA CON ZONA HORARIA.
+     */
+    public function isAttendanceMarkingActive(): bool
     {
-        if ($this->hasAttendanceToday()) {
-            return false;
-        }
-        try {
-            $timezone = 'America/Lima';
-            $now = Carbon::now($timezone);
-            $todayWeekDay = $now->dayOfWeekIso;
-            $horarioDeHoy = $this->horarios()->where('dia_semana', $todayWeekDay)->first();
+        $now = Carbon::now('America/Lima');
+        
+        // Carbon usa 1 para Lunes y 7 para Domingo. IsoFormat('E') devuelve esto.
+        $currentDayOfWeek = $now->isoFormat('E');
+        $currentTime = $now->format('H:i:s');
 
-            if (!$horarioDeHoy) return false;
-            
-            $horaInicio = Carbon::parse($horarioDeHoy->hora_inicio, $timezone)->subMinutes(15);
-            $horaFin = Carbon::parse($horarioDeHoy->hora_fin, $timezone)->addMinutes(10);
+        // Busca si existe algún horario para el día de hoy
+        // que coincida con la hora actual.
+        $activeSchedule = $this->horarios()
+            ->where('dia_semana', $currentDayOfWeek)
+            ->where('hora_inicio', '<=', $currentTime)
+            ->where('hora_fin', '>=', $currentTime)
+            ->exists();
 
-            return $now->between($horaInicio, $horaFin);
-        } catch (\Exception $e) {
-            return false;
-        }
+        return $activeSchedule;
     }
 }

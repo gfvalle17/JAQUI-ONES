@@ -151,7 +151,7 @@
                     
                         <form action="{{ url('admin/asignaciones/create') }}" method="POST">
                         @csrf
-                            <input type="text" name="personal_id" id="docente_id" required>
+                            <input type="text" name="personal_id" id="docente_id" hidden required>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -262,7 +262,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="">Materia asignada</label><b> (*)</b>
                                         <div class="input-group mb-3">

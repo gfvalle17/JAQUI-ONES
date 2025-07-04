@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AsistenciaController;
+use App\Http\Controllers\AsistenciaDocenteController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -124,18 +126,14 @@ Route::put('/admin/ppffs/{id}', [App\Http\Controllers\PpffController::class, 'up
 Route::delete('/admin/ppffs/{id}', [App\Http\Controllers\PpffController::class, 'destroy'])->name('admin.ppffs.destroy')->middleware('auth','can:admin.ppffs.destroy');
 
 //rutas para asignación de materias de los docentes
-Route::get('/admin/asignaciones', [App\Http\Controllers\AsignacionController::class, 'index'])->name('admin.asignaciones.index')->middleware('auth','can:admin.asignaciones.index');
-Route::get('/admin/asignaciones/create', [App\Http\Controllers\AsignacionController::class, 'create'])->name('admin.asignaciones.create')->middleware('auth','can:admin.asignaciones.create');
-Route::post('/admin/asignaciones/create', [App\Http\Controllers\AsignacionController::class, 'store'])->name('admin.asignaciones.store')->middleware('auth','can:admin.asignaciones.store');
-Route::get('/admin/asignaciones/buscar_docente/{id}', [App\Http\Controllers\AsignacionController::class, 'buscar_docente'])->name('admin.asignaciones.buscar_docente')->middleware('auth','can:admin.asignaciones.buscar_docente');
-Route::get('/admin/asignaciones/{id}', [App\Http\Controllers\AsignacionController::class, 'show'])->name('admin.asignaciones.show')->middleware('auth','can:admin.asignaciones.show');
-Route::get('/admin/asignaciones/{id}/edit', [App\Http\Controllers\AsignacionController::class, 'edit'])->name('admin.asignaciones.edit')->middleware('auth','can:admin.asignaciones.edit');
-Route::put('/admin/asignaciones/{id}', [App\Http\Controllers\AsignacionController::class, 'update'])->name('admin.asignaciones.update');
-Route::delete('/admin/asignaciones/{id}/edit', [App\Http\Controllers\AsignacionController::class, 'destroy'])->name('admin.asignaciones.destroy')->middleware('auth','can:admin.asignaciones.destroy');
-Route::get('/admin/asignaciones/get-grados/{nivel_id}', [App\Http\Controllers\AsignacionController::class, 'getGrados']);
-Route::get('/admin/asignaciones/get-paralelos/{grado_id}', [App\Http\Controllers\AsignacionController::class, 'getParalelos']);
-Route::get('/admin/get-grados/{nivel_id}', [App\Http\Controllers\AsignacionController::class, 'getGrados'])->name('admin.getGrados');
-Route::get('/admin/get-paralelos/{grado_id}', [App\Http\Controllers\AsignacionController::class, 'getParalelos'])->name('admin.getParalelos');
+Route::get('/admin/asignaciones', [App\Http\Controllers\AsignacionController::class, 'index'])->name('admin.asignaciones.index')->middleware('auth');
+Route::get('/admin/asignaciones/create', [App\Http\Controllers\AsignacionController::class, 'create'])->name('admin.asignaciones.create')->middleware('auth');
+Route::post('/admin/asignaciones/create', [App\Http\Controllers\AsignacionController::class, 'store'])->name('admin.asignaciones.store')->middleware('auth');
+Route::get('/admin/asignaciones/buscar_docente/{id}', [App\Http\Controllers\AsignacionController::class, 'buscar_docente'])->name('admin.matriculaciones.buscar_docente')->middleware('auth');
+Route::get('/admin/asignaciones/{id}', [App\Http\Controllers\AsignacionController::class, 'show'])->name('admin.matriculaciones.show')->middleware('auth');
+Route::get('/admin/asignaciones/{id}/edit', [App\Http\Controllers\AsignacionController::class, 'edit'])->name('admin.matriculaciones.edit')->middleware('auth');
+Route::put('/admin/asignaciones/{id}', [App\Http\Controllers\AsignacionController::class, 'update'])->name('admin.matriculaciones.update')->middleware('auth');
+Route::delete('/admin/asignaciones/{id}', [App\Http\Controllers\AsignacionController::class, 'destroy'])->name('admin.matriculaciones.destroy')->middleware('auth');
 
 //rutas para asistencias del estudiante
 Route::get('/admin/asistencias', [App\Http\Controllers\AsistenciaController::class, 'index'])->name('admin.asistencias.index')->middleware('auth','can:admin.asistencias.index');
@@ -144,25 +142,32 @@ Route::get('/admin/asistencias/asignacion/{id}', [App\Http\Controllers\Asistenci
 Route::post('/admin/asistencias/create', [App\Http\Controllers\AsistenciaController::class, 'store'])->name('admin.asistencias.store')->middleware('auth','can:admin.asistencias.store');
 Route::put('/admin/asistencias/{id}', [App\Http\Controllers\AsistenciaController::class, 'update'])->name('admin.asistencias.update')->middleware('auth');
 Route::delete('/admin/asistencias/{id}', [App\Http\Controllers\AsistenciaController::class, 'destroy'])->name('admin.asistencias.destroy')->middleware('auth');
+Route::get('/admin/asistencias/{id}/edit', [App\Http\Controllers\AsistenciaController::class, 'edit'])->name('admin.asistencias.edit')->middleware('auth');
 
-//rutas para asistencias del docente
-Route::post('/docente/asistencias-docente', [App\Http\Controllers\AsistenciaDocenteController::class, 'store'])->name('docente.asistencia.store')->middleware(['auth']);
-Route::get('/admin/asistencias-docente/{id}', [App\Http\Controllers\AsistenciaDocenteController::class, 'show'])->name('admin.asistencias-docente.show')->middleware(['auth', 'can:admin.asistencias.index']);
-Route::get('/admin/asistencias-docentes/{id}/edit', [App\Http\Controllers\AsistenciaDocenteController::class, 'edit'])->name('admin.asistencias-docentes.edit');
-Route::delete('/admin/asistencias-docentes/{id}', [App\Http\Controllers\AsistenciaDocenteController::class, 'destroy'])->name('admin.asistencias-docentes.destroy');
-Route::put('/admin/asistencias-docentes/{id}', [App\Http\Controllers\AsistenciaDocenteController::class, 'update'])->name('admin.asistencias-docentes.update');
+Route::middleware(['auth'])->group(function () {
+    // ======================= CORRECCIÓN PRINCIPAL =======================
+    // Se cambia la URL a '/docente/asistencia/store' para que coincida con lo que el navegador pide.
+    Route::post('/docente/asistencia/store', [AsistenciaDocenteController::class, 'store'])->name('docente.asistencia.store');
+
+    // Rutas para que el ADMINISTRADOR gestione las asistencias
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/asistencias-docente/{id}', [AsistenciaDocenteController::class, 'show'])->name('asistencias-docente.show')->can('admin.asistencias.index');
+        Route::get('/asistencias-docentes/{id}/edit', [AsistenciaDocenteController::class, 'edit'])->name('asistencias-docentes.edit');
+        Route::put('/asistencias-docentes/{id}', [AsistenciaDocenteController::class, 'update'])->name('asistencias-docentes.update');
+        Route::delete('/asistencias-docentes/{id}', [AsistenciaDocenteController::class, 'destroy'])->name('asistencias-docentes.destroy');
+
+        // ======================= LUGAR CORRECTO PARA LAS RUTAS DE AUDITORÍA =======================
+        // Las he movido aquí para que tengan el prefijo /admin y la protección del middleware.
+        
+        // Ruta para MOSTRAR la página del informe de auditoría
+        Route::get('/auditoria', [\App\Http\Controllers\AuditController::class, 'index'])->name('auditoria.index');
+
+        // Ruta para EXPORTAR el informe a Excel
+        Route::get('/auditoria/exportar', [\App\Http\Controllers\AuditController::class, 'export'])->name('auditoria.export');
+    });
+});
 
 // Ruta para mostrar la vista del calendario
 Route::get('/calendario', [App\Http\Controllers\HomeController::class, 'calendario'])->name('calendario')->middleware('auth');
 
-// En routes/web.php
-Route::get('/admin/horario-diario', [App\Http\Controllers\HorarioController::class, 'vistaDiaria'])
-    ->name('admin.horario.diario')
-    ->middleware(['auth', 'can:ADMINISTRADOR']); // Protegemos la ruta para que solo el admin pueda verla
-
-Route::get('/test-modal', function () {
-    return view('test_modal');
-});
-
-Route::get('get-grados/{nivel}', [AsignacionController::class, 'getGrados'])->name('asignaciones.getGrados');
-Route::get('get-paralelos/{grado}', [AsignacionController::class, 'getParalelos'])->name('asignaciones.getParalelos');
+// ===== LAS RUTAS DE AUDITORÍA SE HAN MOVIDO DESDE AQUÍ HACIA EL GRUPO DE ADMIN =====
